@@ -1,0 +1,12 @@
+"AddonInfo"
+{
+	"name"		"Armored Combat Framework Clientside"
+	"version"	"v1"
+	"up_date"	"Dec 2009"
+	"author_name"	"Kafouille"
+	"author_email"	"Kafouille@gmail.com"
+	
+	"info"		"The models, sound and particles files for ACF"
+
+	"override"	"0"
+}
