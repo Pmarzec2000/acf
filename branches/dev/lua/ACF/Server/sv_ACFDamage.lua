@@ -194,7 +194,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	
 			else
 				local phys = Tar.Entity:GetPhysicsObject() 
 				if (phys:IsValid()) then 
-					phys:ApplyForceOffset( Table.Vec * PowerFraction / Tar.Entity:GetPhysicsObject():GetMass() ,  Vector(0,0,2) )	
+					phys:ApplyForceOffset( Table.Vec * PowerFraction * 350 ,  Hitpos )	--Assuming about a third of the energy goes to propelling the target prop (Power in KJ * 1000 to get J then divided by 3)
 				end
 			end
 			
@@ -262,7 +262,7 @@ function ACF_HEKill( Entity , HitVector , Energy )
 
 	local phys = Debris:GetPhysicsObject() 
 	if (phys:IsValid()) then
-		phys:ApplyForceOffset( HitVector:GetNormal() * Energy * 1000 / Debris:GetPhysicsObject():GetMass() , Vector(0,0,100) ) 	
+		phys:ApplyForceOffset( HitVector:GetNormal() * Energy * 350 , Debris:GetPos()+VectorRand()*20 ) 	
 	end
 
 	return Debris
@@ -290,7 +290,7 @@ function ACF_APKill( Entity , HitVector , Power )
 		
 	local phys = Debris:GetPhysicsObject() 
 	if (phys:IsValid()) then	
-		phys:ApplyForceOffset( HitVector:GetNormal() * 1000 * Power ,  Vector(0,0,100) )	
+		phys:ApplyForceOffset( HitVector:GetNormal() * Power * 350 ,  Debris:GetPos()+VectorRand()*20 )	
 	end
 
 	return Debris
