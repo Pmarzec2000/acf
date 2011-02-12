@@ -2,13 +2,14 @@ AddCSLuaFile( "ACF/Shared/Rounds/RoundAP.lua" )
 
 local DefTable = {}
 	DefTable.type = "Ammo"										--Tells the spawn menu what entity to spawn
-	DefTable.name = "AP"										--Human readable name
+	DefTable.name = "Armour Piercing"							--Human readable name
 	DefTable.model = "models/munitions/round_100mm_shot.mdl"	--Shell flight model
-	DefTable.desc = "Solid AP shot"
+	DefTable.desc = "A shell made out of a solid piece of steel, meant to penetrate armour"
 	DefTable.netid = 1											--Unique ammotype ID for network transmission
 
 	DefTable.limitvel = 600										--Most efficient penetration speed in m/s
 	DefTable.ricochet = 75										--Base ricochet angle
+	DefTable.ketransfert = 0.3									--Kinetic energy transfert to the target for movement purposes
 	
 	DefTable.create = function( Gun, BulletData ) ACF_APCreate( Gun, BulletData ) end
 	DefTable.convert = function( Crate, Table ) local Result = ACF_APConvert( Crate, Table ) return Result end
@@ -75,14 +76,15 @@ function ACF_APCreate( Gun, BulletData )
 	
 end
 
-function ACF_APPropImpact( Index, Bullet, Target, HitNormal, HitPos )
+function ACF_APPropImpact( Index, Bullet, Target, HitNormal, HitPos )	--Can be called from other round types
 
 	if ACF_Check( Target ) then
+		local Type = Bullet["Type"]
 		local Angle = ACF_GetHitAngle( HitNormal , Bullet["Flight"] )
 		local Speed = Bullet["Flight"]:Length()
-		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], ACF.RoundTypes["AP"]["limitvel"] )
+		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], ACF.RoundTypes[Type]["limitvel"] )
 		local Ricochet = 0
-		local MinAngle = ACF.RoundTypes["AP"]["ricochet"] - Speed/39.37/15	--Making the chance of a ricochet get higher as the speeds increase
+		local MinAngle = ACF.RoundTypes[Type]["ricochet"] - Speed/39.37/15	--Making the chance of a ricochet get higher as the speeds increase
 		if Angle > math.random(MinAngle,90) and Angle < 89.9 then	--Checking for ricochet
 			Ricochet = (Angle/100)			--If ricocheting, calculate how much of the energy is dumped into the plate and how much is carried by the ricochet
 			Energy.Penetration = Energy.Penetration - Energy.Penetration*Ricochet/4 --Ricocheting can save plates that would theorically get penetrated, can add up to 1/4 rating
@@ -90,8 +92,11 @@ function ACF_APPropImpact( Index, Bullet, Target, HitNormal, HitPos )
 		local HitRes = ACF_Damage ( Target , Energy , Bullet["PenAera"] , Angle , Bullet["Owner"] )  --DAMAGE !!
 
 		local phys = Target:GetPhysicsObject() 
+		if (Target:GetParent():IsValid()) then
+			phys = Target:GetParent():GetPhysicsObject() 
+		end
 		if (phys:IsValid()) then	
-			phys:ApplyForceCenter( Bullet["Flight"]:GetNormal() * (Energy.Momentum*HitRes.Loss*39.37) )	
+			phys:ApplyForceOffset( Bullet["Flight"]:GetNormal() * (Energy.Kinetic*HitRes.Loss*1000*ACF.RoundTypes[Type]["ketransfert"]), HitPos )	--Assuming about a third of the energy goes to propelling the target prop (Kinetic in KJ * 1000 to get J then divided by ketransfert round data)
 		end
 		
 		if HitRes.Kill then

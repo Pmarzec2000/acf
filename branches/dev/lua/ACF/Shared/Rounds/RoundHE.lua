@@ -2,12 +2,13 @@ AddCSLuaFile( "ACF/Shared/Rounds/RoundHE.lua" )
 
 local DefTable = {}
 	DefTable.type = "Ammo"										--Tells the spawn menu what entity to spawn
-	DefTable.name = "HE"										--Human readable name
+	DefTable.name = "High Explosive"							--Human readable name
 	DefTable.model = "models/munitions/round_100mm_shot.mdl"	--Shell flight model
-	DefTable.desc = "Instant detonation HE shell"
+	DefTable.desc = "A shell filled with explosives, detonating on impact"
 	DefTable.netid = 2											--Unique ammotype ID for network transmission
 	
 	DefTable.limitvel = 500										--Most efficient penetration speed in m/s
+	DefTable.ketransfert = 0.1									--Kinetic energy transfert to the target for movement purposes
 	
 	DefTable.create = function( Gun, BulletData ) ACF_HECreate( Gun, BulletData ) end
 	DefTable.convert = function( Crate, Table ) local Result = ACF_HEConvert( Crate, Table ) return Result end
@@ -79,17 +80,21 @@ function ACF_HECreate( Gun, BulletData )
 	
 end
 
-function ACF_HEPropImpact( Index, Bullet, Target, HitNormal, HitPos )
+function ACF_HEPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can be called from other round types
 
 	if ACF_Check( Target ) then
+		local Type = Bullet["Type"]
 		local Angle = ACF_GetHitAngle( HitNormal , Bullet["Flight"] )
 		local Speed = Bullet["Flight"]:Length()
-		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], ACF.RoundTypes["HE"]["limitvel"] )
+		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], ACF.RoundTypes[Type]["limitvel"] )
 		local HitRes = ACF_Damage ( Target , Energy , Bullet["PenAera"] , Angle , Bullet["Owner"] )  --DAMAGE !!
 		
 		local phys = Target:GetPhysicsObject() 
+		if (Target:GetParent():IsValid()) then
+			phys = Target:GetParent():GetPhysicsObject() 
+		end
 		if (phys:IsValid()) then	
-			phys:ApplyForceCenter( Bullet["Flight"]:GetNormal() * (Energy.Momentum*HitRes.Loss*39.37) )	
+			phys:ApplyForceOffset( Bullet["Flight"]:GetNormal() * (Energy.Kinetic*HitRes.Loss*1000*ACF.RoundTypes[Type]["ketransfert"]), HitPos )	--Assuming about a third of the energy goes to propelling the target prop (Kinetic in KJ * 1000 to get J then divided by ketransfert round data)
 		end
 		
 		if HitRes.Kill then
