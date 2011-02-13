@@ -31,31 +31,31 @@ function ACFGearboxGUICreate( Table )
 	end
 	--PrintTable(Table.geartable)
 		
-	acfmenupanel.CData.Name = vgui.Create( "DLabel" )
+	acfmenupanel.CData.Name = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.Name:SetText( Table.name )
 		acfmenupanel.CData.Name:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Name )
 	
-	acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel" )
+	acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.DisplayModel:SetModel( Table.model )
 		acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 70 , 70 , 30 ) )
 		acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
 		acfmenupanel.CData.DisplayModel:SetFOV( 90 )
-		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel.WeaponDisplay:GetWide(),100)
+		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),100)
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 	
-	acfmenupanel.CData.Desc = vgui.Create( "DLabel" )
+	acfmenupanel.CData.Desc = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.Desc:SetText( Table.desc )
-		acfmenupanel.CData.Desc:SetSize(acfmenupanel.WeaponDisplay:GetWide(),100)
+		acfmenupanel.CData.Desc:SetSize(acfmenupanel:GetWide(),100)
 		acfmenupanel.CData.Desc:SizeToContentsY()
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Desc )
 	
-	acfmenupanel.CData.Weight = vgui.Create( "DLabel" )
+	acfmenupanel.CData.Weight = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.Weight:SetText( "Weight : "..Table.weight.."kg" )
 		acfmenupanel.CData.Weight:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Weight )
 	
-	acfmenupanel.CData.Gear10 = vgui.Create( "DNumSlider" )
+	acfmenupanel.CData.Gear10 = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.Gear10:SetText( "Reverse" )
 		acfmenupanel.CData.Gear10:SetMin( -2 )
 		acfmenupanel.CData.Gear10:SetMax( 2 )
@@ -69,7 +69,7 @@ function ACFGearboxGUICreate( Table )
 		end
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Gear10 )
 	
-	acfmenupanel.CData.Gear1 = vgui.Create( "DNumSlider" )
+	acfmenupanel.CData.Gear1 = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.Gear1:SetText( "First" )
 		acfmenupanel.CData.Gear1:SetMin( -2 )
 		acfmenupanel.CData.Gear1:SetMax( 2 )
@@ -84,7 +84,7 @@ function ACFGearboxGUICreate( Table )
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Gear1 )
 	
 	if Table.gears >= 2 then
-		acfmenupanel.CData.Gear2 = vgui.Create( "DNumSlider" )
+		acfmenupanel.CData.Gear2 = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel.CData.Gear2:SetText( "Second" )
 			acfmenupanel.CData.Gear2:SetMin( -2 )
 			acfmenupanel.CData.Gear2:SetMax( 2 )
@@ -100,7 +100,7 @@ function ACFGearboxGUICreate( Table )
 	end
 	
 	if Table.gears >= 3 then
-		acfmenupanel.CData.Gear3 = vgui.Create( "DNumSlider" )
+		acfmenupanel.CData.Gear3 = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel.CData.Gear3:SetText( "Third" )
 			acfmenupanel.CData.Gear3:SetMin( -2 )
 			acfmenupanel.CData.Gear3:SetMax( 2 )
@@ -116,7 +116,7 @@ function ACFGearboxGUICreate( Table )
 	end
 	
 	if Table.gears >= 4 then
-		acfmenupanel.CData.Gear4 = vgui.Create( "DNumSlider" )
+		acfmenupanel.CData.Gear4 = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel.CData.Gear4:SetText( "Fourth" )
 			acfmenupanel.CData.Gear4:SetMin( -2 )
 			acfmenupanel.CData.Gear4:SetMax( 2 )
@@ -132,7 +132,7 @@ function ACFGearboxGUICreate( Table )
 	end
 	
 	if Table.gears >= 5 then
-		acfmenupanel.CData.Gear5 = vgui.Create( "DNumSlider" )
+		acfmenupanel.CData.Gear5 = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel.CData.Gear5:SetText( "Fifth" )
 			acfmenupanel.CData.Gear5:SetMin( -2 )
 			acfmenupanel.CData.Gear5:SetMax( 2 )
@@ -148,7 +148,7 @@ function ACFGearboxGUICreate( Table )
 	end
 	
 	if Table.gears >= 6 then
-		acfmenupanel.CData.Gear6 = vgui.Create( "DNumSlider" )
+		acfmenupanel.CData.Gear6 = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel.CData.Gear6:SetText( "Sixth" )
 			acfmenupanel.CData.Gear6:SetMin( -2 )
 			acfmenupanel.CData.Gear6:SetMax( 2 )
@@ -164,7 +164,7 @@ function ACFGearboxGUICreate( Table )
 	end
 	
 	if Table.gears >= 7 then
-		acfmenupanel.CData.Gear7 = vgui.Create( "DNumSlider" )
+		acfmenupanel.CData.Gear7 = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel.CData.Gear7:SetText( "Seventh" )
 			acfmenupanel.CData.Gear7:SetMin( -2 )
 			acfmenupanel.CData.Gear7:SetMax( 2 )
@@ -180,7 +180,7 @@ function ACFGearboxGUICreate( Table )
 	end
 	
 	if Table.gears >= 8 then
-		acfmenupanel.CData.Gear8 = vgui.Create( "DNumSlider" )
+		acfmenupanel.CData.Gear8 = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel.CData.Gear8:SetText( "Eighth" )
 			acfmenupanel.CData.Gear8:SetMin( -2 )
 			acfmenupanel.CData.Gear8:SetMax( 2 )
@@ -196,7 +196,7 @@ function ACFGearboxGUICreate( Table )
 	end
 	
 	if Table.gears >= 9 then
-		acfmenupanel.CData.Gear9 = vgui.Create( "DNumSlider" )
+		acfmenupanel.CData.Gear9 = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel.CData.Gear9:SetText( "Ninth" )
 			acfmenupanel.CData.Gear9:SetMin( -2 )
 			acfmenupanel.CData.Gear9:SetMax( 2 )
