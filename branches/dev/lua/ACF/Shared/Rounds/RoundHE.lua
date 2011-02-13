@@ -8,7 +8,6 @@ local DefTable = {}
 	DefTable.netid = 2											--Unique ammotype ID for network transmission
 	
 	DefTable.limitvel = 500										--Most efficient penetration speed in m/s
-	DefTable.ketransfert = 0.1									--Kinetic energy transfert to the target for movement purposes
 	
 	DefTable.create = function( Gun, BulletData ) ACF_HECreate( Gun, BulletData ) end
 	DefTable.convert = function( Crate, Table ) local Result = ACF_HEConvert( Crate, Table ) return Result end
@@ -69,6 +68,7 @@ function ACF_HEConvert( Crate, PlayerData )		--Function to convert the player's 
 		BulletData["MuzzleVel"] = ACF_MuzzleVelocity( BulletData["PropMass"], BulletData["ProjMass"], BulletData["Caliber"] )
 		BulletData["DragCoef"] = ((BulletData["FrAera"]/10000)/BulletData["ProjMass"])
 		BulletData["BoomPower"] = BulletData["PropMass"] + BulletData["FillerMass"]
+		BulletData["ShovePower"] = 0.1
 	
 	return BulletData
 	
@@ -94,7 +94,7 @@ function ACF_HEPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can be 
 			phys = Target:GetParent():GetPhysicsObject() 
 		end
 		if (phys:IsValid()) then	
-			phys:ApplyForceOffset( Bullet["Flight"]:GetNormal() * (Energy.Kinetic*HitRes.Loss*1000*ACF.RoundTypes[Type]["ketransfert"]), HitPos )	--Assuming about a third of the energy goes to propelling the target prop (Kinetic in KJ * 1000 to get J then divided by ketransfert round data)
+			phys:ApplyForceOffset( Bullet["Flight"]:GetNormal() * (Energy.Kinetic*HitRes.Loss*1000*Bullet["ShovePower"]), HitPos )	--Assuming about a third of the energy goes to propelling the target prop (Kinetic in KJ * 1000 to get J then divided by ketransfert round data)
 		end
 		
 		if HitRes.Kill then

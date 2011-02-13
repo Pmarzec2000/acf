@@ -9,7 +9,6 @@ local DefTable = {}
 
 	DefTable.limitvel = 400										--Most efficient penetration speed in m/s
 	DefTable.ricochet = 85										--Base ricochet angle
-	DefTable.ketransfert = 0.7									--Kinetic energy transfert to the target for movement purposes
 	
 	DefTable.create = function( Gun, BulletData ) ACF_APCreate( Gun, BulletData ) end --Uses basic AP function
 	DefTable.convert = function( Crate, Table ) local Result = ACF_HPConvert( Crate, Table ) return Result end --Uses custom function
@@ -58,13 +57,16 @@ function ACF_HPConvert( Crate, PlayerData )		--Function to convert the player's 
 			PlayerData["PropLenght"] = PlayerData["PropLenght"] * Ratio
 		end
 		
+		BulletData["CavLenght"] = math.min(PlayerData["Data5"],PlayerData["ProjLenght"]*0.5) --Expantion factor
+		BulletData["PenAera"] = (3.1416 * (BulletData["Caliber"]/2 + BulletData["CavLenght"])^2)^ACF.PenAreaMod
+		
 		BulletData["RoundVolume"] = BulletData["FrAera"] * (PlayerData["ProjLenght"] + PlayerData["PropLenght"])	
-		BulletData["ProjMass"] = BulletData["FrAera"] * (PlayerData["ProjLenght"]*7.9/1000) --Volume of the projectile as a cylinder * streamline factor (Data5) * density of steel
+		BulletData["ProjMass"] = BulletData["FrAera"] * ((PlayerData["ProjLenght"]-BulletData["CavLenght"])*7.9/1000) --Volume of the projectile as a cylinder * streamline factor (Data5) * density of steel
 		
 		BulletData["DragCoef"] = ((BulletData["FrAera"]/10000)/BulletData["ProjMass"])
-		BulletData["PenAera"] = (BulletData["FrAera"]^ACF.PenAreaMod)*2
 		BulletData["MuzzleVel"] = ACF_MuzzleVelocity( BulletData["PropMass"], BulletData["ProjMass"], BulletData["Caliber"] )
 		BulletData["BoomPower"] = BulletData["PropMass"]
+		BulletData["ShovePower"] = 0.3 + (BulletData["CavLenght"]/PlayerData["ProjLenght"])
 	
 	return BulletData
 	
@@ -112,6 +114,7 @@ function ACF_HPGUICreate( Panel, Table )
 			acfmenupanel.AmmoData = {}
 				acfmenupanel.AmmoData["PropLength"] = 0
 				acfmenupanel.AmmoData["ProjLength"] = 0
+				acfmenupanel.AmmoData["CavLength"] = 0
 				acfmenupanel.AmmoData["Tracer"] = false
 				acfmenupanel.AmmoData["Data"] = acfmenupanel.WeaponData["Guns"][data]["round"]
 			ACF_HPGUIUpdate()
@@ -170,6 +173,22 @@ function ACF_HPGUICreate( Panel, Table )
 		end
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.SetProjLength )
 	
+	--Hollow Point Cavity Slider
+	acfmenupanel.CData.SetCavLength = vgui.Create( "DNumSlider" )
+		acfmenupanel.CData.SetCavLength:SetText( "Hollow point cavity length" )
+		acfmenupanel.CData.SetCavLength:SetMin( 0 )
+		acfmenupanel.CData.SetCavLength:SetMax( 1000 )
+		acfmenupanel.CData.SetCavLength:SetDecimals( 3 )
+		if acfmenupanel.AmmoData["CavLength"] then
+			acfmenupanel.CData.SetCavLength:SetValue(acfmenupanel.AmmoData["CavLength"])
+		end
+		acfmenupanel.CData.SetCavLength.OnValueChanged = function( slider, val )
+			if acfmenupanel.AmmoData["CavLength"] != val then
+				ACF_HPGUIUpdate()
+			end
+		end
+	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.SetCavLength )
+	
 	--Tracer checkbox
 	acfmenupanel.CData.SetTracer = vgui.Create( "DCheckBoxLabel" )
 		acfmenupanel.CData.SetTracer:SetText( "Tracer" )
@@ -186,7 +205,12 @@ function ACF_HPGUICreate( Panel, Table )
 	acfmenupanel.CData.ProjWeight = vgui.Create( "DLabel" )
 		acfmenupanel.CData.ProjWeight:SetText( "" )
 		acfmenupanel.CData.ProjWeight:SizeToContents()
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.ProjWeight )
+	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.ProjWeight )	
+	
+	acfmenupanel.CData.ProjRadius = vgui.Create( "DLabel" )
+		acfmenupanel.CData.ProjRadius:SetText( "" )
+		acfmenupanel.CData.ProjRadius:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.ProjRadius )
 
 	acfmenupanel.CData.VelocityDisplay = vgui.Create( "DLabel" )
 		acfmenupanel.CData.VelocityDisplay:SetText( "" )
@@ -210,8 +234,7 @@ end
 function ACF_HPGUIUpdate( Panel, Table )
 	
 	local Caliber = acfmenupanel.WeaponData["Guns"][acfmenupanel.AmmoData["Data"]["id"]]["caliber"]
-		
-	local ProjWeight = 3.1416*(Caliber/2)^2 * (acfmenupanel.AmmoData["ProjLength"]*7.9/1000) --Volume of the projectile as a cylinder * streamline factor * density of steel
+
 	local PropWeight = 3.1416*(Caliber/2)^2 * (acfmenupanel.AmmoData["PropLength"]*ACF.PDensity/1000) --Volume of the case as a cylinder * Powder density converted from g to kg
 	local TracerLenght = 0
 	if acfmenupanel.AmmoData["Tracer"] then
@@ -233,14 +256,25 @@ function ACF_HPGUIUpdate( Panel, Table )
 	acfmenupanel.CData.SetProjLength:SetMax( MaxProjLength )
 	acfmenupanel.AmmoData["ProjLength"] = ClampProj	
 	
+	local MinCavLength = 0
+	local MaxCavLength = ClampProj*0.5
+	local ClampCav = math.floor(math.Clamp(acfmenupanel.CData.SetCavLength:GetValue()*1000,MinCavLength*1000,MaxCavLength*1000))/1000
+	acfmenupanel.CData.SetCavLength:SetMin( MinCavLength ) 
+	acfmenupanel.CData.SetCavLength:SetMax( MaxCavLength )
+	acfmenupanel.AmmoData["CavLength"] = ClampCav	
+	
+	local ProjWeight = 3.1416*(Caliber/2)^2 * ((ClampProj-ClampCav)*7.9/1000) --Volume of the projectile as a cylinder * streamline factor * density of steel
+	
 	--Set the values on the sliders if they have changed.
 	if acfmenupanel.CData.SetPropLength:GetValue() != ClampProp then acfmenupanel.CData.SetPropLength:SetValue( ClampProp ) return end
 	if acfmenupanel.CData.SetProjLength:GetValue() != ClampProj then acfmenupanel.CData.SetProjLength:SetValue( ClampProj ) return end	
+	if acfmenupanel.CData.SetCavLength:GetValue() != ClampCav then acfmenupanel.CData.SetCavLength:SetValue( ClampCav ) return end	
 	
 	RunConsoleCommand( "acfmenu_data1", acfmenupanel.AmmoData["Data"]["id"] )
 	RunConsoleCommand( "acfmenu_data2", "HP" )
 	RunConsoleCommand( "acfmenu_data3", ClampProp )		--For Gun ammo, Data3 should always be Propellant
 	RunConsoleCommand( "acfmenu_data4", ClampProj )		--And Data4 total round mass
+	RunConsoleCommand( "acfmenu_data5", ClampCav )
 	RunConsoleCommand( "acfmenu_data10", TracerLenght )
 	
 	acfmenupanel.CData.lengthDisplay:SetText( "Total Round length : "..(math.floor((acfmenupanel.AmmoData["Data"]["maxlength"] - Freelength)*1000)/1000).."cm/"..acfmenupanel.AmmoData["Data"]["maxlength"].."cm" )
@@ -256,6 +290,10 @@ function ACF_HPGUIUpdate( Panel, Table )
 	acfmenupanel.CData.ProjWeight:SetText( "Projectile Weight : "..(math.floor(ProjWeight*1000)).." g" )
 	acfmenupanel.CData.ProjWeight:SizeToContents()
 	
+	local Radius = (Caliber + ClampCav*2)	--Calculating the "Pankake factor"
+	acfmenupanel.CData.ProjRadius:SetText( "Expanded Caliber : "..(math.floor(Radius*1000)).." mm" )
+	acfmenupanel.CData.ProjRadius:SizeToContents()
+	
 	local Velocity = ACF_MuzzleVelocity( PropWeight, ProjWeight, acfmenupanel.WeaponData["Guns"][acfmenupanel.AmmoData["Data"]["id"]]["caliber"] )
 	acfmenupanel.CData.VelocityDisplay:SetText( "Muzzle Velocity : "..math.floor(Velocity*ACF.VelScale).." m\s" )
 	acfmenupanel.CData.VelocityDisplay:SizeToContents()
@@ -263,7 +301,7 @@ function ACF_HPGUIUpdate( Panel, Table )
 	local Energy = ACF_Kinetic( Velocity*39.37 , ProjWeight, ACF.RoundTypes["HP"]["limitvel"] )
 	local Aera = (( 3.1416*(Caliber/2)^2 )^ACF.PenAreaMod)*2
 	local Penetration = (Energy.Penetration/Aera)*ACF.KEtoRHA
-	acfmenupanel.CData.PenetrationDisplay:SetText( "Maximum Penetration : "..math.floor(Penetration).." mm RHA\n" )
+	acfmenupanel.CData.PenetrationDisplay:SetText( "Maximum Penetration : "..math.floor(Penetration).." mm RHA" )
 	acfmenupanel.CData.PenetrationDisplay:SizeToContents()
 	
 	acfmenupanel.CData.KEDisplay:SetText( "Kinetic Energy : "..math.floor(Energy.Kinetic).." KJ" )
