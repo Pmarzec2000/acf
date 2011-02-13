@@ -7,7 +7,7 @@ local DefTable = {}
 	DefTable.desc = "A shell made out of a solid piece of steel, meant to penetrate armour"
 	DefTable.netid = 1											--Unique ammotype ID for network transmission
 
-	DefTable.limitvel = 600										--Most efficient penetration speed in m/s
+	DefTable.limitvel = 800										--Most efficient penetration speed in m/s
 	DefTable.ricochet = 75										--Base ricochet angle
 	DefTable.ketransfert = 0.3									--Kinetic energy transfert to the target for movement purposes
 	

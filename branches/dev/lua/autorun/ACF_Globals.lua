@@ -88,8 +88,9 @@ function ACF_Kinetic( Speed , Mass, LimitVel )
 		Energy.Kinetic = ((Mass) * ((Speed)^2))/2000 --Energy in KiloJoules
 		Energy.Momentum = (Speed * Mass)
 		
-		local KE = (Mass * (Speed^ACF.KinFudgeFactor))/2000
-		Energy.Penetration = math.max( KE - (math.max(Speed-LimitVel,0)^2)/(LimitVel*5) * (KE/200)^0.95 , KE*0.1 )
+		--local KE = (Mass * (Speed^ACF.KinFudgeFactor))/2000
+		--Energy.Penetration = math.max( KE - (math.max(Speed-LimitVel,0)^2)/(LimitVel*5) * (KE/200)^0.95 , KE*0.1 )
+		Energy.Penetration = math.max(Energy.Momentum - math.max(Speed-LimitVel,0)/(LimitVel*5) * Energy.Momentum , Energy.Momentum*0.1)
 	
 	return Energy
 end
