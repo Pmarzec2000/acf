@@ -34,7 +34,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
 	local Gearbox = ents.Create("ACF_Gearbox")
-	local List = list.Get("ACFWeapons")
+	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
 	if not Gearbox:IsValid() then return false end
 	Gearbox:SetAngles(Angle)

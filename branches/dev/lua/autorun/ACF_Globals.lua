@@ -58,7 +58,7 @@ include("ACF/Shared/ACFGunList.lua")
 include("ACF/Shared/ACFMobilityList.lua")
 include("ACF/Shared/ACFSensorList.lua")
 
-ACF.Weapons = list.Get("ACFWeapons")
+ACF.Weapons = list.Get("ACFEnts")
 table.SortByMember(ACF.Weapons["Guns"],"caliber")
 	
 ACF.Classes = list.Get("ACFClasses")

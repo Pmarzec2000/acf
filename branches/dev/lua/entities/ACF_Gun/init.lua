@@ -37,7 +37,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	if not Owner:CheckLimit("_acf_gun") then return false end
 	
 	local Gun = ents.Create("ACF_Gun")
-	local List = list.Get("ACFWeapons")
+	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
 	if not Gun:IsValid() then return false end
 	Gun:SetAngles(Angle)

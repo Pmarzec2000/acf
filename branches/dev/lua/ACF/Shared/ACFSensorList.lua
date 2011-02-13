@@ -16,4 +16,4 @@ local Stabiliser = {}
 	end
 SensorTable["Stabiliser"] = Stabiliser
 	
-list.Set( "ACFWeapons", "Sensors", SensorTable )	--end sensors listing
+list.Set( "ACFEnts", "Sensors", SensorTable )	--end sensors listing

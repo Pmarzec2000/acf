@@ -482,7 +482,7 @@ local MO200mm = {}
 	end
 GunTable["200mmM"] = MO200mm
 	
-list.Set( "ACFWeapons", "Guns", GunTable )
+list.Set( "ACFEnts", "Guns", GunTable )
 
 local GunClass = {}	--Start gun classes listing
 
@@ -778,4 +778,4 @@ local Ammo4x4x8 = {}
 	Ammo4x4x8.weight = 480
 AmmoTable["Ammo4x4x6"] = Ammo4x4x6
 	
-list.Set( "ACFWeapons", "Ammo", AmmoTable )	--end ammo containers listing
+list.Set( "ACFEnts", "Ammo", AmmoTable )	--end ammo containers listing

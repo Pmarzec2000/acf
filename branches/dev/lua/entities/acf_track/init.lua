@@ -21,7 +21,7 @@ function MakeACF_ViewPod(Owner, Pos, Angle, Id)
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
 	local Ent = ents.Create("acf_track")
-	local List = list.Get("ACFWeapons")
+	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
 	
 	if not Ent:IsValid() then return false end

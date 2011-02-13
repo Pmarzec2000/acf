@@ -30,7 +30,7 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
 	local Engine = ents.Create("ACF_Engine")
-	local List = list.Get("ACFWeapons")
+	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
 	if not Engine:IsValid() then return false end
 	Engine:SetAngles(Angle)

@@ -121,4 +121,4 @@ local Tracks = {}
 	end
 MobilityTable["Tracks"] = Tracks
 
-list.Set( "ACFWeapons", "Mobility", MobilityTable )	--end mobility listing
+list.Set( "ACFEnts", "Mobility", MobilityTable )	--end mobility listing
