@@ -68,11 +68,12 @@ function ACF_HEConvert( Crate, PlayerData )		--Function to convert the player's 
 	
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
 	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
-	local MinWall = 0.3+((Energy.Momentum/Data["FrAera"])^0.7)/50 --The minimal shell wall thickness required to survive firing at the current energy level	
+	local MinWall = 0.1+((Energy.Momentum/Data["FrAera"])^0.7)/50 --The minimal shell wall thickness required to survive firing at the current energy level	
 	
-	GUIData["MinFillerMass"] = 0
-	GUIData["MaxFillerMass"] = (3.1416*math.max((Data["Caliber"]/2)-MinWall,0)^2) * (Data["ProjLength"]-MinWall*0.2) * ACF.HEDensity/1000 --Calculating the free space you have with those walls then seeying how much mass of TNT that corresponds to
-	Data["FillerMass"] = math.min(PlayerData["Data5"],GUIData["MaxFillerMass"])
+	GUIData["MinFillerVol"] = 0
+	GUIData["MaxFillerVol"] = (3.1416*math.max((Data["Caliber"]/2)-MinWall,0)^2) * (Data["ProjLength"]-MinWall*2) --Calculating the free space you have with those walls then seeying how much mass of TNT that corresponds to
+	GUIData["FillerVol"] = math.min(PlayerData["Data5"],GUIData["MaxFillerVol"])
+	Data["FillerMass"] = GUIData["FillerVol"] * ACF.HEDensity/1000
 	
 	--Random bullshit left
 	Data["ShovePower"] = 0.1
@@ -209,10 +210,12 @@ end
 function ACF_HEGUICreate( Panel, Table )
 
 	acfmenupanel:AmmoSelect()
+
+	acfmenupanel:AmmoText("LengthDisplay", "")	--Total round length (Name, Desc)
 	
 	acfmenupanel:AmmoSlider("PropLength",0,0,1000,3, "Propellant Length", "")	--Propellant Length Slider (Name, Value, Min, Max, Decimals, Title, Desc)
 	acfmenupanel:AmmoSlider("ProjLength",0,0,1000,3, "Projectile Length", "")	--Projectile Length Slider (Name, Value, Min, Max, Decimals, Title, Desc)
-	acfmenupanel:AmmoSlider("FillerMass",0,0,1000,3, "HE Filler", "")--Hollow Point Cavity Slider (Name, Value, Min, Max, Decimals, Title, Desc)
+	acfmenupanel:AmmoSlider("FillerVol",0,0,1000,3, "HE Filler", "")--Hollow Point Cavity Slider (Name, Value, Min, Max, Decimals, Title, Desc)
 	
 	acfmenupanel:AmmoCheckbox("Tracer", "Tracer", "")			--Tracer checkbox (Name, Title, Desc)
 	
@@ -231,7 +234,7 @@ function ACF_HEGUIUpdate( Panel, Table )
 		PlayerData["Type"] = "HE"										--Hardcoded, match ACFRoundTypes table index
 		PlayerData["PropLength"] = acfmenupanel.AmmoData["PropLength"]	--PropLength slider
 		PlayerData["ProjLength"] = acfmenupanel.AmmoData["ProjLength"]	--ProjLength slider
-		PlayerData["Data5"] = acfmenupanel.AmmoData["FillerMass"]
+		PlayerData["Data5"] = acfmenupanel.AmmoData["FillerVol"]
 		--PlayerData["Data6"] = acfmenupanel.AmmoData[Name]		--Not used
 		--PlayerData["Data7"] = acfmenupanel.AmmoData[Name]		--Not used
 		--PlayerData["Data8"] = acfmenupanel.AmmoData[Name]		--Not used
@@ -246,15 +249,16 @@ function ACF_HEGUIUpdate( Panel, Table )
 	RunConsoleCommand( "acfmenu_data2", "HE" )					--Hardcoded, match ACFRoundTypes table index
 	RunConsoleCommand( "acfmenu_data3", Data.PropLength )		--For Gun ammo, Data3 should always be Propellant
 	RunConsoleCommand( "acfmenu_data4", Data.ProjLength )		--And Data4 total round mass
-	RunConsoleCommand( "acfmenu_data5", Data.FillerMass )
+	RunConsoleCommand( "acfmenu_data5", Data.FillerVol )
 	RunConsoleCommand( "acfmenu_data10", Data.Tracer )
 	
 	acfmenupanel:AmmoSlider("PropLength",Data.PropLength,Data.MinPropLength,Data["MaxTotalLength"],3, "Propellant Length", "Propellant Mass : "..(math.floor(Data.PropMass*1000)).." g" )	--Propellant Length Slider (Name, Min, Max, Decimals, Title, Desc)
 	acfmenupanel:AmmoSlider("ProjLength",Data.ProjLength,Data.MinProjLength,Data["MaxTotalLength"],3, "Projectile Length", "Projectile Mass : "..(math.floor(Data.ProjMass*1000)).." g")	--Projectile Length Slider (Name, Min, Max, Decimals, Title, Desc)
-	acfmenupanel:AmmoSlider("FillerMass",Data.FillerMass,Data.MinFillerMass,Data.MaxFillerMass,3, "HE Filler", "HE Filler Mass : "..(math.floor(Data["FillerMass"]*1000)).." g")	--HE Filler Slider (Name, Min, Max, Decimals, Title, Desc)
+	acfmenupanel:AmmoSlider("FillerVol",Data.FillerVol,Data.MinFillerVol,Data.MaxFillerVol,3, "HE Filler Volume", "HE Filler Mass : "..(math.floor(Data["FillerMass"]*1000)).." g")	--HE Filler Slider (Name, Min, Max, Decimals, Title, Desc)
 	
 	acfmenupanel:AmmoCheckbox("Tracer", "Tracer : "..(math.floor(Data.Tracer*10)/10).."cm\n", "" )			--Tracer checkbox (Name, Title, Desc)
 
+	acfmenupanel:AmmoText("LengthDisplay", "Round Length : "..(math.floor((Data.PropLength+Data.ProjLength+Data.Tracer)*100)/100).."/"..(Data.MaxTotalLength).." cm")	--Total round length (Name, Desc)
 	acfmenupanel:AmmoText("VelocityDisplay", "Muzzle Velocity : "..math.floor(Data.MuzzleVel*ACF.VelScale).." m\s")	--Proj muzzle velocity (Name, Desc)	
 	acfmenupanel:AmmoText("BlastDisplay", "Blast Radius : "..(math.floor(Data.BlastRadius*100)/1000).." m\n")	--Proj muzzle velocity (Name, Desc)
 	acfmenupanel:AmmoText("FragDisplay", "Fragments : "..(Data.Fragments).."\n Average Fragment Weight : "..(math.floor(Data.FragMass*10000)/10).." g \n Average Fragment Velocity : "..math.floor(Data.FragVel).." m/s")	--Proj muzzle penetration (Name, Desc)

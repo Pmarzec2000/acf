@@ -81,12 +81,13 @@ function ACFGunGUICreate( Table )
 	
 	acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.DisplayModel:SetModel( Table.model )
-		acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 70 , 70 , 30 ) )
+		acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250 , 500 , 250 ) )
 		acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
-		acfmenupanel.CData.DisplayModel:SetFOV( 90 )
-		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),100)
+		acfmenupanel.CData.DisplayModel:SetFOV( 20 )
+		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide()*0.6)
+		acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel , entity ) end
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
-	
+		
 	acfmenupanel.CData.Desc = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.Desc:SetText( Table.desc )
 		acfmenupanel.CData.Desc:SetSize(acfmenupanel:GetWide(),100)

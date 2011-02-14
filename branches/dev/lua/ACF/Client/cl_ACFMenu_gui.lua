@@ -9,15 +9,42 @@ function PANEL:Init( )
 	
 	self.WeaponSelect = vgui.Create( "DTree", self )
 
-	self.Classes = ACF.Classes
 	self.WeaponData = ACF.Weapons
+	
+	local Classes = list.Get("ACFClasses")
+	self.Classes = {}
+	for ID,Table in pairs(Classes) do
+		self.Classes[ID] = {}
+		for ClassID,Class in pairs(Table) do
+			Class.id = ClassID
+			table.insert(self.Classes[ID], Class)
+		end
+		table.sort(self.Classes[ID], function(a,b) return a.id < b.id end )
+	end
+	
+	local WeaponDisplay = list.Get("ACFEnts")
+	self.WeaponDisplay = {}
+	for ID,Table in pairs(WeaponDisplay) do
+		self.WeaponDisplay[ID] = {}
+		for EntID,Data in pairs(Table) do
+			table.insert(self.WeaponDisplay[ID], Data)
+		end
+		
+		if ID == "Guns" then
+			table.sort(self.WeaponDisplay[ID], function(a,b) if a.gunclass == b.gunclass then return a.caliber < b.caliber else return a.gunclass < b.gunclass end end)
+		else
+			table.sort(self.WeaponDisplay[ID], function(a,b) return a.id < b.id end )
+		end
+		
+	end
+	
 	local Guns = self.WeaponSelect:AddNode( "Guns" )
 	for ClassID,Class in pairs(self.Classes["GunClass"]) do
 	
 		local SubNode = Guns:AddNode( Class.name or "No Name" )
 		
-		for Type, Ent in pairs(self.WeaponData["Guns"]) do	
-			if Ent.gunclass == ClassID then
+		for Type, Ent in pairs(self.WeaponDisplay["Guns"]) do	
+			if Ent.gunclass == Class.id then
 				local EndNode = SubNode:AddNode( Ent.name or "No Name" )
 				EndNode.mytable = Ent
 				function EndNode:DoClick()
@@ -34,20 +61,18 @@ function PANEL:Init( )
 	local Ammo = self.WeaponSelect:AddNode( "Ammo" )
 	for AmmoID,AmmoTable in pairs(self.RoundAttribs) do
 		
-		if AmmoTable.gunclass == ClassID then
-			local EndNode = Ammo:AddNode( AmmoTable.name or "No Name" )
-			EndNode.mytable = AmmoTable
-			function EndNode:DoClick()
-				RunConsoleCommand( "acfmenu_type", self.mytable.type )
-				acfmenupanel:UpdateDisplay( self.mytable )
-			end
-			EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+		local EndNode = Ammo:AddNode( AmmoTable.name or "No Name" )
+		EndNode.mytable = AmmoTable
+		function EndNode:DoClick()
+			RunConsoleCommand( "acfmenu_type", self.mytable.type )
+			acfmenupanel:UpdateDisplay( self.mytable )
 		end
+		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
 		
 	end
 	
 	local Mobility = self.WeaponSelect:AddNode( "Mobility" )
-	for MobilityID,MobilityTable in pairs(self.WeaponData["Mobility"]) do
+	for MobilityID,MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		
 		local EndNode = Mobility:AddNode( MobilityTable.name or "No Name" )
 		EndNode.mytable = MobilityTable
@@ -60,7 +85,7 @@ function PANEL:Init( )
 	end
 	
 	local Sensors = self.WeaponSelect:AddNode( "Sensors" )
-	for SensorsID,SensorsTable in pairs(self.WeaponData["Sensors"]) do
+	for SensorsID,SensorsTable in pairs(self.WeaponDisplay["Sensors"]) do
 		
 		local EndNode = Sensors:AddNode( SensorsTable.name or "No Name" )
 		EndNode.mytable = SensorsTable
@@ -71,8 +96,6 @@ function PANEL:Init( )
 		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
 		
 	end
-
-	local DefaultTable = { self.WeaponData["Guns"] }
 	
 end
 
@@ -155,8 +178,7 @@ function PANEL:AmmoSelect()
 	--Creating the ammo crate selection
 	acfmenupanel.CData.CrateSelect = vgui.Create( "DMultiChoice", acfmenupanel.CustomDisplay )	--Every display and slider is placed in the Round table so it gets trashed when selecting a new round type
 		acfmenupanel.CData.CrateSelect:SetSize(100, 30)
-		table.SortByMember(acfmenupanel.WeaponData["Ammo"],"caliber")
-		for Key, Value in pairs( acfmenupanel.WeaponData["Ammo"] ) do
+		for Key, Value in pairs( acfmenupanel.WeaponDisplay["Ammo"] ) do
 			acfmenupanel.CData.CrateSelect:AddChoice( Value.id , Key )
 		end
 		acfmenupanel.CData.CrateSelect.OnSelect = function( index , value , data )
@@ -169,7 +191,7 @@ function PANEL:AmmoSelect()
 	--Create the caliber selection display
 	acfmenupanel.CData.CaliberSelect = vgui.Create( "DMultiChoice", acfmenupanel.CustomDisplay )	
 		acfmenupanel.CData.CaliberSelect:SetSize(100, 30)
-		for Key, Value in pairs( acfmenupanel.WeaponData["Guns"] ) do
+		for Key, Value in pairs( acfmenupanel.WeaponDisplay["Guns"] ) do
 			acfmenupanel.CData.CaliberSelect:AddChoice( Value.id , Key )
 		end
 		acfmenupanel.CData.CaliberSelect.OnSelect = function( index , value , data )
@@ -178,19 +200,7 @@ function PANEL:AmmoSelect()
 		end
 		acfmenupanel.CData.CaliberSelect:SetText(acfmenupanel.AmmoData["Data"]["id"])
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.CaliberSelect )
-	
-	--Create the round schematic
-	acfmenupanel.CData.PropSchem = vgui.Create( "DShape", acfmenupanel.CustomDisplay )
-		acfmenupanel.CData.PropSchem:SetType("Rect")
-		acfmenupanel.CData.PropSchem:SetSize( 100, 20 )
-		acfmenupanel.CData.PropSchem:SetColor( 255, 255, 255, 255 )
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.PropSchem )
-	
-	acfmenupanel.CData.LengthDisplay = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
-		acfmenupanel.CData.LengthDisplay:SetText( "" )
-		acfmenupanel.CData.LengthDisplay:SizeToContents()
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.LengthDisplay )
-	
+
 end
 
 function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variable name in the table, Value, Min value, Max Value, slider text title, slider decimeals, description text below slider 
