@@ -123,7 +123,6 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 		PlayerData["Data8"] = self.RoundData8
 		PlayerData["Data9"] = self.RoundData9
 		PlayerData["Data10"] = self.RoundData10
-	PrintTable(PlayerData)
 	self.ConvertData = ACF.RoundTypes[self.RoundType]["convert"]
 	self.BulletData = self:ConvertData( PlayerData )
 		

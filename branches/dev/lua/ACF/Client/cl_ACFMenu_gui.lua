@@ -195,28 +195,26 @@ end
 
 function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variable name in the table, Value, Min value, Max Value, slider text title, slider decimeals, description text below slider 
 
-	if not acfmenupanel["CData"][Name.."_slider"] then
-		acfmenupanel["CData"][Name.."_slider"] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-			acfmenupanel["CData"][Name.."_slider"]:SetText( Title )
-			acfmenupanel["CData"][Name.."_slider"]:SetMin( 0 )
-			acfmenupanel["CData"][Name.."_slider"]:SetMax( 1000 )
-			acfmenupanel["CData"][Name.."_slider"]:SetDecimals( Decimals )
+	if not acfmenupanel["CData"][Name] then
+		acfmenupanel["CData"][Name] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
+			acfmenupanel["CData"][Name]:SetText( Title )
+			acfmenupanel["CData"][Name]:SetMin( 0 )
+			acfmenupanel["CData"][Name]:SetMax( 1000 )
+			acfmenupanel["CData"][Name]:SetDecimals( Decimals )
 			if acfmenupanel.AmmoData[Name] then
-				acfmenupanel["CData"][Name.."_slider"]:SetValue(acfmenupanel.AmmoData[Name])
-			else
-				acfmenupanel.AmmoData[Name] = Value
+				acfmenupanel["CData"][Name]:SetValue(acfmenupanel.AmmoData[Name])
 			end
-			acfmenupanel["CData"][Name.."_slider"].OnValueChanged = function( slider, val )
+			acfmenupanel["CData"][Name].OnValueChanged = function( slider, val )
 				if acfmenupanel.AmmoData[Name] != val then
 					acfmenupanel.AmmoData[Name] = val
-					self:UpdateAttribs()
+					self:UpdateAttribs( Name )
 				end
 			end
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_slider"] )
+		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name] )
 	end
-	acfmenupanel["CData"][Name.."_slider"]:SetMin( Min ) 
-	acfmenupanel["CData"][Name.."_slider"]:SetMax( Max )
-	if acfmenupanel["CData"][Name.."_slider"]:GetValue() != Value then acfmenupanel["CData"][Name.."_slider"]:SetValue( Value ) end
+	acfmenupanel["CData"][Name]:SetMin( Min ) 
+	acfmenupanel["CData"][Name]:SetMax( Max )
+	acfmenupanel["CData"][Name]:SetValue( Value )
 	
 	if not acfmenupanel["CData"][Name.."_text"] and Desc then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
@@ -231,22 +229,22 @@ end
 
 function PANEL:AmmoCheckbox(Name, Title, Desc) --Variable name in the table, slider text title, slider decimeals, description text below slider 
 
-	if not acfmenupanel["CData"][Name.."_check"] then
-		acfmenupanel["CData"][Name.."_check"] = vgui.Create( "DCheckBoxLabel" )
-			acfmenupanel["CData"][Name.."_check"]:SetText( Title or "" )
-			acfmenupanel["CData"][Name.."_check"]:SizeToContents()
+	if not acfmenupanel["CData"][Name] then
+		acfmenupanel["CData"][Name] = vgui.Create( "DCheckBoxLabel" )
+			acfmenupanel["CData"][Name]:SetText( Title or "" )
+			acfmenupanel["CData"][Name]:SizeToContents()
 			if acfmenupanel.AmmoData[Name] != nil then
-				acfmenupanel["CData"][Name.."_check"]:SetChecked(acfmenupanel.AmmoData[Name])
+				acfmenupanel["CData"][Name]:SetChecked(acfmenupanel.AmmoData[Name])
 			else
 				acfmenupanel.AmmoData[Name] = false
 			end
-			acfmenupanel["CData"][Name.."_check"].OnChange = function( check, bval )
+			acfmenupanel["CData"][Name].OnChange = function( check, bval )
 				acfmenupanel.AmmoData[Name] = bval
-				self:UpdateAttribs()
+				self:UpdateAttribs( {Name, bval} )
 			end
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_check"] )
+		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name] )
 	end
-	acfmenupanel["CData"][Name.."_check"]:SetText( Title )
+	acfmenupanel["CData"][Name]:SetText( Title )
 	
 	
 	if not acfmenupanel["CData"][Name.."_text"] and Desc then
