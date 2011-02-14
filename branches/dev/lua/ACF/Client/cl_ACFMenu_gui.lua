@@ -197,6 +197,7 @@ function PANEL:AmmoSelect()
 		acfmenupanel.CData.CaliberSelect.OnSelect = function( index , value , data )
 			acfmenupanel.AmmoData["Data"] = acfmenupanel.WeaponData["Guns"][data]["round"]
 			self:UpdateAttribs()
+			self:UpdateAttribs()	--Note : this is intentional
 		end
 		acfmenupanel.CData.CaliberSelect:SetText(acfmenupanel.AmmoData["Data"]["id"])
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.CaliberSelect )

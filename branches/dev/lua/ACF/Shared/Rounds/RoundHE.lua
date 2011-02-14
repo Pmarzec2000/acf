@@ -38,40 +38,15 @@ function ACF_HEConvert( Crate, PlayerData )		--Function to convert the player's 
 	if not PlayerData["Data5"] then PlayerData["Data5"] = 0 end
 	if not PlayerData["Data10"] then PlayerData["Data10"] = 0 end
 	
-	local BulletMax = ACF.Weapons["Guns"][PlayerData["Id"]]["round"]
-	GUIData["MaxTotalLength"] = BulletMax["maxlength"]
-		
-	Data["Caliber"] = ACF.Weapons["Guns"][PlayerData["Id"]]["caliber"]
-	Data["FrAera"] = 3.1416 * (Data["Caliber"]/2)^2
-	
-	Data["Tracer"] = 0
-	if PlayerData["Data10"]*1 > 0 then	--Check for tracer
-		Data["Tracer"] = math.min(5/Data["Caliber"],2.5) --Tracer space calcs
-	end
-	
-	local PropMax = (BulletMax["propweight"]*1000/ACF.PDensity) / Data["FrAera"]	--Current casing absolute max propellant capacity
-	local CurLength = (PlayerData["ProjLength"] + math.min(PlayerData["PropLength"],PropMax) + Data["Tracer"])
-	GUIData["MinPropLength"] = 0.01
-	GUIData["MaxPropLength"] = math.max(math.min(GUIData["MaxTotalLength"]-CurLength+PlayerData["PropLength"],PropMax),GUIData["MinPropLength"]) --Check if the desired prop lenght fits in the case and doesn't exceed the gun max
-	
-	GUIData["MinProjLength"] = Data["Caliber"]*1.5
-	GUIData["MaxProjLength"] = math.max(GUIData["MaxTotalLength"]-CurLength+PlayerData["ProjLength"],GUIData["MinProjLength"]) --Check if the desired proj lenght fits in the case
-
-	local Ratio = math.min( (GUIData["MaxTotalLength"] - Data["Tracer"])/(PlayerData["ProjLength"] + math.min(PlayerData["PropLength"],PropMax)) , 1 ) --This is to check the current ratio between elements if i need to clamp it
-	Data["ProjLength"] = math.Clamp(PlayerData["ProjLength"]*Ratio,GUIData["MinProjLength"],GUIData["MaxProjLength"])
-	Data["PropLength"] = math.Clamp(PlayerData["PropLength"]*Ratio,GUIData["MinPropLength"],GUIData["MaxPropLength"])
+	PlayerData, Data, ServerData, GUIData = ACF_RoundBaseGunpowder( PlayerData, Data, ServerData, GUIData )
 	
 	--Shell sturdiness calcs
-	Data["PropMass"] = Data["FrAera"] * (Data["PropLength"]*ACF.PDensity/1000) --Volume of the case as a cylinder * Powder density converted from g to kg
-	GUIData["ProjVolume"] = Data["FrAera"] * Data["ProjLength"]
 	Data["ProjMass"] = math.max(GUIData["ProjVolume"]-PlayerData["Data5"],0)*7.9/1000 + math.min(PlayerData["Data5"],GUIData["ProjVolume"])*ACF.HEDensity/1000--Volume of the projectile as a cylinder - Volume of the filler * density of steel + Volume of the filler * density of TNT
-	
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
 	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
-	local MinWall = 0.1+((Energy.Momentum/Data["FrAera"])^0.7)/50 --The minimal shell wall thickness required to survive firing at the current energy level	
-	
+		
 	GUIData["MinFillerVol"] = 0
-	GUIData["MaxFillerVol"] = (3.1416*math.max((Data["Caliber"]/2)-MinWall,0)^2) * (Data["ProjLength"]-MinWall*2) --Calculating the free space you have with those walls then seeying how much mass of TNT that corresponds to
+	GUIData["MaxFillerVol"] = math.min(GUIData["ProjVolume"],ACF_RoundShellCapacity( Energy.Momentum, Data["FrAera"], Data["Caliber"], Data["ProjLength"] ))
 	GUIData["FillerVol"] = math.min(PlayerData["Data5"],GUIData["MaxFillerVol"])
 	Data["FillerMass"] = GUIData["FillerVol"] * ACF.HEDensity/1000
 	
@@ -80,8 +55,7 @@ function ACF_HEConvert( Crate, PlayerData )		--Function to convert the player's 
 	Data["PenAera"] = Data["FrAera"]^ACF.PenAreaMod
 	Data["DragCoef"] = ((Data["FrAera"]/10000)/Data["ProjMass"])
 	
-	Data["RoundVolume"] = Data["FrAera"] * (Data["ProjLength"] + Data["PropLength"])	
-	Data["BoomPower"] = Data["PropMass"]
+	Data["BoomPower"] = Data["PropMass"] + Data["FillerMass"]
 
 	if SERVER then --Only the crates need this part
 		ServerData["Id"] = PlayerData["Id"]

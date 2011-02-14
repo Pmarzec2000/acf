@@ -53,6 +53,7 @@ include("ACF/Shared/Rounds/RoundAP.lua")
 include("ACF/Shared/Rounds/RoundHE.lua")
 include("ACF/Shared/Rounds/RoundHP.lua")
 include("ACF/Shared/Rounds/RoundRefill.lua")
+include("ACF/Shared/Rounds/RoundFunctions.lua")
 
 include("ACF/Shared/ACFGunList.lua")
 include("ACF/Shared/ACFMobilityList.lua")

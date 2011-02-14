@@ -38,37 +38,14 @@ function ACF_APConvert( Crate, PlayerData )		--Function to convert the player's 
 	if not PlayerData["ProjLength"] then PlayerData["ProjLength"] = 0 end
 	if not PlayerData["Data10"] then PlayerData["Data10"] = 0 end
 	
-	local BulletMax = ACF.Weapons["Guns"][PlayerData["Id"]]["round"]
-	GUIData["MaxTotalLength"] = BulletMax["maxlength"]
-		
-	Data["Caliber"] = ACF.Weapons["Guns"][PlayerData["Id"]]["caliber"]
-	Data["FrAera"] = 3.1416 * (Data["Caliber"]/2)^2
+	PlayerData, Data, ServerData, GUIData = ACF_RoundBaseGunpowder( PlayerData, Data, ServerData, GUIData )
 	
-	Data["Tracer"] = 0
-	if PlayerData["Data10"]*1 > 0 then	--Check for tracer
-		Data["Tracer"] = math.min(5/Data["Caliber"],2.5) --Tracer space calcs
-	end
-	
-	local PropMax = (BulletMax["propweight"]*1000/ACF.PDensity) / Data["FrAera"]	--Current casing absolute max propellant capacity
-	local CurLength = (PlayerData["ProjLength"] + math.min(PlayerData["PropLength"],PropMax) + Data["Tracer"])
-	GUIData["MinPropLength"] = 0.01
-	GUIData["MaxPropLength"] = math.max(math.min(GUIData["MaxTotalLength"]-CurLength+PlayerData["PropLength"],PropMax),GUIData["MinPropLength"]) --Check if the desired prop lenght fits in the case and doesn't exceed the gun max
-	
-	GUIData["MinProjLength"] = Data["Caliber"]*1.5
-	GUIData["MaxProjLength"] = math.max(GUIData["MaxTotalLength"]-CurLength+PlayerData["ProjLength"],GUIData["MinProjLength"]) --Check if the desired proj lenght fits in the case
-	
-	local Ratio = math.min( (GUIData["MaxTotalLength"] - Data["Tracer"])/(PlayerData["ProjLength"] + math.min(PlayerData["PropLength"],PropMax)) , 1 ) --This is to check the current ratio between elements if i need to clamp it
-	Data["ProjLength"] = math.Clamp(PlayerData["ProjLength"]*Ratio,GUIData["MinProjLength"],GUIData["MaxProjLength"])
-	Data["PropLength"] = math.Clamp(PlayerData["PropLength"]*Ratio,GUIData["MinPropLength"],GUIData["MaxPropLength"])
-		
-	Data["PropMass"] = Data["FrAera"] * (Data["PropLength"]*ACF.PDensity/1000) --Volume of the case as a cylinder * Powder density converted from g to kg
 	Data["ProjMass"] = Data["FrAera"] * (Data["ProjLength"]*7.9/1000) --Volume of the projectile as a cylinder * density of steel
-	Data["ShovePower"] = 0.3
+	Data["ShovePower"] = 0.2
 	Data["PenAera"] = Data["FrAera"]^ACF.PenAreaMod
 	Data["DragCoef"] = ((Data["FrAera"]/10000)/Data["ProjMass"])
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
 	
-	Data["RoundVolume"] = Data["FrAera"] * (Data["ProjLength"] + Data["PropLength"])	
 	Data["BoomPower"] = Data["PropMass"]
 
 	if SERVER then --Only the crates need this part
@@ -105,13 +82,14 @@ function ACF_APPropImpact( Index, Bullet, Target, HitNormal, HitPos )	--Can be c
 			Energy.Penetration = Energy.Penetration - Energy.Penetration*Ricochet/4 --Ricocheting can save plates that would theorically get penetrated, can add up to 1/4 rating
 		end
 		local HitRes = ACF_Damage ( Target , Energy , Bullet["PenAera"] , Angle , Bullet["Owner"] )  --DAMAGE !!
-
+		local NewSpeed = (Energy.Kinetic*(1-HitRes.Loss)*2000/Bullet["ProjMass"])^0.5
 		local phys = Target:GetPhysicsObject() 
+		
 		if (Target:GetParent():IsValid()) then
 			phys = Target:GetParent():GetPhysicsObject() 
 		end
 		if (phys:IsValid()) then	
-			phys:ApplyForceOffset( Bullet["Flight"]:GetNormal() * (Energy.Kinetic*HitRes.Loss*1000*Bullet["ShovePower"]), HitPos )	--Assuming about a third of the energy goes to propelling the target prop (Kinetic in KJ * 1000 to get J then divided by ketransfert round data)
+			phys:ApplyForceOffset( Bullet["Flight"]:GetNormal() * (Energy.Kinetic*HitRes.Loss*1000*Bullet["ShovePower"]), HitPos )
 		end
 		
 		if HitRes.Kill then
@@ -121,7 +99,7 @@ function ACF_APPropImpact( Index, Bullet, Target, HitNormal, HitPos )	--Can be c
 		if HitRes.Overkill > 0 then
 			table.insert( Bullet["Filter"] , Target )					--"Penetrate" (Ingoring the prop for the retry trace)
 			ACF_Spall( HitPos , Bullet["Flight"] , Bullet["Filter"] , Energy.Kinetic*HitRes.Loss , Bullet["Caliber"] , Target.ACF.Armour , Bullet["Owner"] ) --Do some spalling
-			Bullet["Flight"] = Bullet["Flight"]:GetNormalized() * (Energy.Kinetic*(1-HitRes.Loss)*2000/Bullet["ProjMass"])^0.5 * 39.37
+			Bullet["Flight"] = Bullet["Flight"]:GetNormalized() * NewSpeed * 39.37
 			ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 			return "Penetrated"
 		elseif Ricochet > 0 then

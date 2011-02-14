@@ -39,41 +39,24 @@ function ACF_HPConvert( Crate, PlayerData )		--Function to convert the player's 
 	if not PlayerData["Data5"] then PlayerData["Data5"] = 0 end
 	if not PlayerData["Data10"] then PlayerData["Data10"] = 0 end
 	
-	local BulletMax = ACF.Weapons["Guns"][PlayerData["Id"]]["round"]
-	GUIData["MaxTotalLength"] = BulletMax["maxlength"]
-		
-	Data["Caliber"] = ACF.Weapons["Guns"][PlayerData["Id"]]["caliber"]
-	Data["FrAera"] = 3.1416 * (Data["Caliber"]/2)^2
+	PlayerData, Data, ServerData, GUIData = ACF_RoundBaseGunpowder( PlayerData, Data, ServerData, GUIData )
 	
-	Data["Tracer"] = 0
-	if PlayerData["Data10"]*1 > 0 then	--Check for tracer
-		Data["Tracer"] = math.min(5/Data["Caliber"],2.5) --Tracer space calcs
-	end
-	
-	local PropMax = (BulletMax["propweight"]*1000/ACF.PDensity) / Data["FrAera"]	--Current casing absolute max propellant capacity
-	local CurLength = (PlayerData["ProjLength"] + math.min(PlayerData["PropLength"],PropMax) + Data["Tracer"])
-	GUIData["MinPropLength"] = 0.01
-	GUIData["MaxPropLength"] = math.max(math.min(GUIData["MaxTotalLength"]-CurLength+PlayerData["PropLength"], PropMax),GUIData["MinPropLength"]) --Check if the desired prop lenght fits in the case and doesn't exceed the gun max
-	
-	GUIData["MinProjLength"] = Data["Caliber"]*1.5
-	GUIData["MaxProjLength"] = math.max(GUIData["MaxTotalLength"]-CurLength+PlayerData["ProjLength"],GUIData["MinProjLength"]) --Check if the desired proj lenght fits in the case
-	
-	local Ratio = math.min( (GUIData["MaxTotalLength"] - Data["Tracer"])/(PlayerData["ProjLength"] + math.min(PlayerData["PropLength"],PropMax)) , 1 ) --This is to check the current ratio between elements if i need to clamp it
-	Data["ProjLength"] = math.Clamp(PlayerData["ProjLength"]*Ratio,GUIData["MinProjLength"],GUIData["MaxProjLength"])
-	Data["PropLength"] = math.Clamp(PlayerData["PropLength"]*Ratio,GUIData["MinPropLength"],GUIData["MaxPropLength"])
-	
-	GUIData["MinCavLength"] = 0
-	GUIData["MaxCavLength"] = Data["ProjLength"]*0.5 --Maximum Cavity length determined after the real max projectile lenght is certain
-	Data["CavLength"] = math.min(PlayerData["Data5"],GUIData["MaxCavLength"])
-	
-	Data["PropMass"] = Data["FrAera"] * (Data["PropLength"]*ACF.PDensity/1000) --Volume of the case as a cylinder * Powder density converted from g to kg
-	Data["ProjMass"] = Data["FrAera"] * ((Data["ProjLength"]-Data["CavLength"])*7.9/1000) --Volume of the projectile as a cylinder * fraction missing due to hollow point (Data5) * density of steel
-	Data["ShovePower"] = 0.3 + (Data["CavLength"]/Data["ProjLength"])
-	Data["PenAera"] = (3.1416 * (Data["Caliber"]/2 + Data["CavLength"])^2)^ACF.PenAreaMod
-	Data["DragCoef"] = ((Data["FrAera"]/10000)/Data["ProjMass"])
+	--Shell sturdiness calcs
+	Data["ProjMass"] = math.max(GUIData["ProjVolume"]-PlayerData["Data5"],0)*7.9/1000  --(Volume of the projectile as a cylinder - Volume of the cavity) * density of steel 
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
+	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
 	
-	Data["RoundVolume"] = Data["FrAera"] * (Data["ProjLength"] + Data["PropLength"])	
+	GUIData["MinCavVol"] = 0
+	GUIData["MaxCavVol"] = math.min(GUIData["ProjVolume"],ACF_RoundShellCapacity( Energy.Momentum, Data["FrAera"], Data["Caliber"], Data["ProjLength"] ))
+	Data["CavVol"] = math.min(PlayerData["Data5"],GUIData["MaxCavVol"])
+	
+	Data["ProjMass"] = ( (Data["FrAera"] * Data["ProjLength"]) - Data["CavVol"] )*7.9/1000 --Volume of the projectile as a cylinder * fraction missing due to hollow point (Data5) * density of steel
+	local ExpRatio = (Data["CavVol"]/GUIData["ProjVolume"])
+	Data["ShovePower"] = 0.2 + ExpRatio/2
+	GUIData["ExpCaliber"] = Data["Caliber"] + ExpRatio*Data["ProjLength"]
+	Data["PenAera"] = (3.1416 * GUIData["ExpCaliber"]/2)^2^ACF.PenAreaMod
+	Data["DragCoef"] = ((Data["FrAera"]/10000)/Data["ProjMass"])
+	
 	Data["BoomPower"] = Data["PropMass"]
 
 	if SERVER then --Only the crates need this part
@@ -83,7 +66,6 @@ function ACF_HPConvert( Crate, PlayerData )		--Function to convert the player's 
 	end
 	
 	if CLIENT then --Only tthe GUI needs this part
-		local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
 		GUIData["MaxKETransfert"] = Energy.Kinetic*Data["ShovePower"]
 		GUIData["MaxPen"] = (Energy.Penetration/Data["PenAera"])*ACF.KEtoRHA
 		return table.Merge(Data,GUIData)
@@ -100,7 +82,7 @@ function ACF_HPGUICreate( Panel, Table )
 
 	acfmenupanel:AmmoSlider("PropLength",0,0,1000,3, "Propellant Length", "")	--Propellant Length Slider (Name, Value, Min, Max, Decimals, Title, Desc)
 	acfmenupanel:AmmoSlider("ProjLength",0,0,1000,3, "Projectile Length", "")	--Projectile Length Slider (Name, Value, Min, Max, Decimals, Title, Desc)
-	acfmenupanel:AmmoSlider("CavLength",0,0,1000,2, "Hollow Point Length", "")--Hollow Point Cavity Slider (Name, Value, Min, Max, Decimals, Title, Desc)
+	acfmenupanel:AmmoSlider("CavVol",0,0,1000,2, "Hollow Point Length", "")--Hollow Point Cavity Slider (Name, Value, Min, Max, Decimals, Title, Desc)
 	
 	acfmenupanel:AmmoCheckbox("Tracer", "Tracer", "")			--Tracer checkbox (Name, Title, Desc)
 	
@@ -119,7 +101,7 @@ function ACF_HPGUIUpdate( Panel, Table )
 		PlayerData["Type"] = "HP"										--Hardcoded, match ACFRoundTypes table index
 		PlayerData["PropLength"] = acfmenupanel.AmmoData["PropLength"]	--PropLength slider
 		PlayerData["ProjLength"] = acfmenupanel.AmmoData["ProjLength"]	--ProjLength slider
-		PlayerData["Data5"] = acfmenupanel.AmmoData["CavLength"]
+		PlayerData["Data5"] = acfmenupanel.AmmoData["CavVol"]
 		--PlayerData["Data6"] = acfmenupanel.AmmoData[Name]		--Not used
 		--PlayerData["Data7"] = acfmenupanel.AmmoData[Name]		--Not used
 		--PlayerData["Data8"] = acfmenupanel.AmmoData[Name]		--Not used
@@ -134,13 +116,13 @@ function ACF_HPGUIUpdate( Panel, Table )
 	RunConsoleCommand( "acfmenu_data2", "HP" )					--Hardcoded, match ACFRoundTypes table index
 	RunConsoleCommand( "acfmenu_data3", Data.PropLength )		--For Gun ammo, Data3 should always be Propellant
 	RunConsoleCommand( "acfmenu_data4", Data.ProjLength )		--And Data4 total round mass
-	RunConsoleCommand( "acfmenu_data5", Data.CavLength )
+	RunConsoleCommand( "acfmenu_data5", Data.CavVol )
 	RunConsoleCommand( "acfmenu_data10", Data.Tracer )
 	
 	acfmenupanel:AmmoSlider("PropLength",Data.PropLength,Data.MinPropLength,Data["MaxTotalLength"],3, "Propellant Length", "Propellant Mass : "..(math.floor(Data.PropMass*1000)).." g" )	--Propellant Length Slider (Name, Min, Max, Decimals, Title, Desc)
 	acfmenupanel:AmmoSlider("ProjLength",Data.ProjLength,Data.MinProjLength,Data["MaxTotalLength"],3, "Projectile Length", "Projectile Mass : "..(math.floor(Data.ProjMass*1000)).." g")	--Projectile Length Slider (Name, Min, Max, Decimals, Title, Desc)
 	
-	acfmenupanel:AmmoSlider("CavLength",Data.CavLength,Data.MinCavLength,Data.MaxCavLength,2, "Hollow Point Length", "Expanded caliber : "..(math.floor(Data.Caliber*10 + Data.CavLength*20)).." mm")--Hollow Point Cavity Slider (Name, Min, Max, Decimals, Title, Desc)
+	acfmenupanel:AmmoSlider("CavVol",Data.CavVol,Data.MinCavVol,Data.MaxCavVol,2, "Hollow Point cavity Volume", "Expanded caliber : "..(math.floor(Data.ExpCaliber*10)).." mm")--Hollow Point Cavity Slider (Name, Min, Max, Decimals, Title, Desc)
 	
 	acfmenupanel:AmmoCheckbox("Tracer", "Tracer : "..(math.floor(Data.Tracer*10)/10).."cm\n", "" )			--Tracer checkbox (Name, Title, Desc)
 	
