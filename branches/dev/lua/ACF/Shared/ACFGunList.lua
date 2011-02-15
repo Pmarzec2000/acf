@@ -406,7 +406,7 @@ local GL40mm = {}
 	GL40mm.desc = " Machineguns are light guns that fire \n equally light bullets at a fast rate"
 	GL40mm.model = "models/launcher/40mmgl.mdl"
 	GL40mm.caliber = 4.0
-	GL40mm.gunclass = "MO"
+	GL40mm.gunclass = "GL"
 	GL40mm.weight = 55
 	GL40mm.year = 1970
 		GL40mm.round = {}
@@ -533,6 +533,14 @@ local Mortar = {}
 	Mortar.rofmod = 2
 	Mortar.sound = "weapons/grenade_launcher1.wav"
 GunClass["MO"] = Mortar	
+
+local GLauncher = {}
+	GLauncher.spread = 2
+	GLauncher.name = "Grenade Launcher"
+	GLauncher.muzzleflash = "40mm_muzzleflash_noscale"
+	GLauncher.rofmod = 0.5
+	GLauncher.sound = "weapons/grenade_launcher1.wav"
+GunClass["GL"] = GLauncher	
 
 list.Set( "ACFClasses", "GunClass", GunClass )	--End gun classes listing
 
