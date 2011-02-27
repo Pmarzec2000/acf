@@ -38,6 +38,14 @@ function PANEL:Init( )
 		
 	end
 	
+	local RoundAttribs = list.Get("ACFRoundTypes")
+	self.RoundAttribs = {}
+	for ID,Table in pairs(RoundAttribs) do
+		Table.id = ID
+		table.insert(self.RoundAttribs, Table)
+	end
+	table.sort(self.RoundAttribs, function(a,b) return a.id < b.id end )
+	
 	local Guns = self.WeaponSelect:AddNode( "Guns" )
 	for ClassID,Class in pairs(self.Classes["GunClass"]) do
 	
@@ -57,7 +65,6 @@ function PANEL:Init( )
 		
 	end
 
-	self.RoundAttribs = list.Get("ACFRoundTypes")
 	local Ammo = self.WeaponSelect:AddNode( "Ammo" )
 	for AmmoID,AmmoTable in pairs(self.RoundAttribs) do
 		
@@ -269,15 +276,16 @@ function PANEL:AmmoCheckbox(Name, Title, Desc) --Variable name in the table, sli
 	
 end
 
-function PANEL:AmmoText(Name, Desc)
+function PANEL:CPanelText(Name, Desc)
 
 	if not acfmenupanel["CData"][Name.."_text"] then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
-			acfmenupanel["CData"][Name.."_text"]:SizeToContents()
+			acfmenupanel["CData"][Name.."_text"]:SetWrap(true)
+			acfmenupanel["CData"][Name.."_text"]:SetAutoStretchVertical( true )
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
-	acfmenupanel["CData"][Name.."_text"]:SizeToContents()
+	acfmenupanel["CData"][Name.."_text"]:SizeToContentsX()
 
 end

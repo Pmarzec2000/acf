@@ -9,10 +9,10 @@ function ENT:Initialize()
 	self.Active = false
 	self.IsMaster = true
 	self.GearLink = {}
-	self.GearRPM = {}
 	self.GearRope = {}
 	
 	self.LastCheck = 0
+	self.LastThink = 0
 	self.Mass = 0
 	self.PhysMass = 0
 	self.MassRatio = 1
@@ -48,6 +48,9 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.PeakMinRPM = List["Mobility"][Id]["peakminrpm"]
 	Engine.PeakMaxRPM = List["Mobility"][Id]["peakmaxrpm"]
 	Engine.LimitRPM = List["Mobility"][Id]["limitprm"]
+	Engine.Inertia = Engine.Mass*0.0001*(3.1416)^2
+	
+	Engine.FlyRPM = 0
 	Engine:SetModel( Engine.Model )	
 	Engine.Sound = nil
 	Engine.RPM = {}
@@ -121,7 +124,8 @@ function ENT:Think()
 		end
 	
 	end
-
+	
+	self.LastThink = Time
 	self.Entity:NextThink(Time)
 	return true
 	
@@ -173,51 +177,60 @@ function ENT:ACFInit()
 	
 	Wire_TriggerOutput(self.Entity, "Mass", math.floor(self.Mass))
 	Wire_TriggerOutput(self.Entity, "Physical Mass", math.floor(self.PhysMass))
+	
+	self.LastThink = CurTime()
+	self.Torque = self.PeakTorque
+	self.FlyRPM = 0
 
 end
 
 function ENT:CalcRPM( EngPhys )
-
+	
+	local DeltaTime = (CurTime() - self.LastThink)
+		
+	local Data = {}
 	local RPM = 0
-	local Freespin = true
+	local Clutch = 0
 	local Boxes = table.Count(self.GearLink)
 	//The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
 	for Key, Gearbox in pairs(self.GearLink) do 	--First, let's calculate the gearboxes RPM
-		self.GearRPM[Key] = Gearbox:Calc()
-		if self.GearRPM[Key] then
-			RPM = RPM + self.GearRPM[Key]
-			Freespin = false
-		end
+		Data[Key] = {}
+			Data[Key]["RPM"] = Gearbox:Calc()
+			Data[Key]["Clutch"] = Gearbox.Clutch
+		RPM = RPM + Data[Key]["RPM"]
+		Clutch = Clutch + Gearbox.Clutch
 	end
 	
-	if Freespin then	--If the engine isn't connceted to any in gear gearbox, calculate the RPM by itself
-		RPM = math.max(self.RPM[1] * (1 + (self.Throttle - self.RPM[1]/self.LimitRPM)),self.IdleRPM)
-	else	--If it is connected to in gear gearboxes, calculate the RPM by their returns
-		RPM = math.max(RPM / Boxes ,self.IdleRPM) or self.IdleRPM	
-	end
+	RPM = RPM / Boxes
+	local TorqueDiff = (self.FlyRPM - RPM)*self.Inertia	
+	
+	for Key, Gearbox in pairs(self.GearLink) do	--Then give the gearboxes the powa
+		Gearbox:Act(math.min(self.Torque/Boxes,Gearbox.Clutch)*self.MassRatio)
+	end	
+
+	local ClutchRatio = math.min(Clutch/math.max(TorqueDiff,0.05),1)	
+	self.Torque = self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM/self.PeakMinRPM , (self.LimitRPM - self.FlyRPM)/(self.LimitRPM - self.PeakMaxRPM), 1 ),0 ) --Calculate the current torque from flywheel RPM
+	self.FlyRPM = self.FlyRPM + (self.Torque - TorqueDiff*ClutchRatio)/self.Inertia		--Let's accelerate the flywheel based on that torque	
+	print(ClutchRatio)
+	print(TorqueDiff)
 	
 	table.remove( self.RPM, 10 )	--Then we calc a smoothed RPM value for the sound effects
-	table.insert( self.RPM, 1, RPM )
+	table.insert( self.RPM, 1, self.FlyRPM )
 	local SmoothRPM = 0
 	for Key, RPM in pairs(self.RPM) do
 		SmoothRPM = SmoothRPM + (RPM or 0)
 	end
 	SmoothRPM = SmoothRPM/10
-
-	local Torque = self.Throttle * math.max( self.PeakTorque * math.min( RPM/self.PeakMinRPM , (self.LimitRPM - RPM)/(self.LimitRPM - self.PeakMaxRPM), 1 ),0 ) --Calculate the current torque from RPM
 	
-	for Key, Gearbox in pairs(self.GearLink) do	--Then give the gearboxes the powa
-		Gearbox:Act(Torque*self.MassRatio/Boxes)
-	end
-	
-	local Power = Torque * SmoothRPM / 701.8368
-	Wire_TriggerOutput(self.Entity, "Torque", math.floor(Torque))
+	local Power = self.Torque * SmoothRPM / 9548.8
+	Wire_TriggerOutput(self.Entity, "Torque", math.floor(self.Torque))
 	Wire_TriggerOutput(self.Entity, "Power", math.floor(Power))
-	Wire_TriggerOutput(self.Entity, "RPM", SmoothRPM)
+	Wire_TriggerOutput(self.Entity, "RPM", self.FlyRPM)
 	self.Sound:ChangePitch(math.min(20 + SmoothRPM/50,255))
 	self.Sound:ChangeVolume(0.2 + self.Throttle/4)
 	
 	return RPM
+	
 end
 
 function ENT:CheckRopes()

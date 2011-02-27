@@ -134,13 +134,9 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 	self:SetNetworkedString("AmmoID",self.BulletData["Id"])		--Set all the networked variables so the client knows what that crate is shooting.
 	self:SetNetworkedString("AmmoType",self.RoundType)
 	self:SetNetworkedString("Ammo",self.Ammo)
-	self:SetNetworkedInt("Caliber",self.BulletData["Caliber"])	
-	self:SetNetworkedInt("ProjMass",self.BulletData["ProjMass"])
-	self:SetNetworkedInt("FillerMass",self.BulletData["FillerMass"])
-	self:SetNetworkedInt("PropMass",self.BulletData["PropMass"])
-	self:SetNetworkedInt("DragCoef",self.BulletData["DragCoef"])
-	self:SetNetworkedInt("MuzzleVel",self.BulletData["MuzzleVel"])
-	self:SetNetworkedInt("Tracer",self.BulletData["Tracer"])
+		
+	self.NetworkData = ACF.RoundTypes[self.RoundType]["network"]
+	self:NetworkData( self.BulletData )
 
 end
 
@@ -193,6 +189,10 @@ function ENT:Think()
 end
 
 function ENT:ConvertData()
+	--You overwrite this with your own function, defined in the ammo definition file
+end
+
+function ENT:NetworkData()
 	--You overwrite this with your own function, defined in the ammo definition file
 end
 

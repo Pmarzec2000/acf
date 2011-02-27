@@ -13,9 +13,17 @@ function ENT:Initialize()
 	self.WheelRopeL = {}
 	self.WheelVel = {}
 	self.WheelNum = 0
-	self.Clutch = 1
+	
+	self.Clutch = 0
 	self.Brake = 0
 	
+	self.Gear = 0
+	self.GearRatio = 0
+	self.ChangeFinished = 0
+	
+	self.LegalThink = 0
+	
+	self.RPM = {}
 	self.CurRPM = 0
 	self.InGear = false
 	self.CanUpdate = true
@@ -23,7 +31,7 @@ function ENT:Initialize()
 	self.Legal = true
 	
 	self.Inputs = Wire_CreateInputs( self.Entity, { "Gear" , "Clutch" , "Brake" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ratio", "Entity", "Debug" , "DebugN" }, { "NORMAL" , "ENTITY" , "VECTOR" , "NORMAL" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ratio", "Entity" , "DebugN" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
 	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
 	self.WireDebugName = "ACF Gearbox"
 
@@ -47,9 +55,10 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Gearbox.Model = List["Mobility"][Id]["model"]
 	Gearbox.Mass = List["Mobility"][Id]["weight"]
 	Gearbox.SwitchTime = List["Mobility"][Id]["switch"]
+	Gearbox.MaxTorque = List["Mobility"][Id]["maxtq"]
 	Gearbox.Gears = List["Mobility"][Id]["gears"]
 	Gearbox.GearTable = List["Mobility"][Id]["geartable"]
-		Gearbox.GearTable[-1] = Data10
+		Gearbox.GearTable[0] = Data10
 		Gearbox.GearTable[1] = Data1
 		Gearbox.GearTable[2] = Data2
 		Gearbox.GearTable[3] = Data3
@@ -60,7 +69,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 		Gearbox.GearTable[8] = Data8
 		Gearbox.GearTable[9] = Data9
 		
-		Gearbox.Gear10 = Data10
+		Gearbox.Gear0 = Data10
 		Gearbox.Gear1 = Data1
 		Gearbox.Gear2 = Data2
 		Gearbox.Gear3 = Data3
@@ -72,7 +81,8 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 		Gearbox.Gear9 = Data9
 	
 	Gearbox:SetModel( Gearbox.Model )	
-	Gearbox.RPM = {}
+	
+	Gearbox.Clutch = Gearbox.MaxTorque
 	
 	Gearbox:PhysicsInit( SOLID_VPHYSICS )      	
 	Gearbox:SetMoveType( MOVETYPE_VPHYSICS )     	
@@ -93,9 +103,6 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	
 	-- constraint.Axis(Gearbox.Output[1], Gearbox, 0, 0, Gearbox.Output[1]:WorldToLocal(Gearbox:GetPos()), Gearbox.Output[1]:WorldToLocal(Gearbox:GetPos()), 0, 0, 0, 0)
 	
-	Gearbox.Gear = 0
-	Gearbox.GearRatio = 0
-	Gearbox.ChangeFinished = 0
 	
 	undo.Create("ACF Gearbox")
 		undo.AddEntity( Gearbox )
@@ -108,7 +115,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	return Gearbox
 end
 list.Set( "ACFCvars", "acf_gearbox" , {"id", "data1", "data2", "data3", "data4", "data5", "data6", "data7", "data8", "data9", "data10"} )
-duplicator.RegisterEntityClass("acf_gearbox", MakeACF_Gearbox, "Pos", "Angle", "Id", "Gear1", "Gear2", "Gear3", "Gear4", "Gear5", "Gear6", "Gear7", "Gear8", "Gear9", "GearTable[-1]" )
+duplicator.RegisterEntityClass("acf_gearbox", MakeACF_Gearbox, "Pos", "Angle", "Id", "Gear1", "Gear2", "Gear3", "Gear4", "Gear5", "Gear6", "Gear7", "Gear8", "Gear9", "Gear0" )
 
 function ENT:Update( ArgsTable )	--That table is the player data, as sorted in the ACFCvars above, with player who shot, and pos and angle of the tool trace inserted at the start
 
@@ -120,7 +127,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		ArgsTable[1]:SendLua( "GAMEMODE:AddNotify('Wrong gearbox model ! You need to load settings made with the same gearbox', NOTIFY_GENERIC, 7);" )
 	return end
 	
-	self.GearTable[-1] = ArgsTable[14]
+	self.GearTable[0] = ArgsTable[14]
 	self.GearTable[1] = ArgsTable[5]
 	self.GearTable[2] = ArgsTable[6]
 	self.GearTable[3] = ArgsTable[7]
@@ -131,7 +138,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.GearTable[8] = ArgsTable[12]
 	self.GearTable[9] = ArgsTable[13]
 	
-	self.Gear10 = ArgsTable[14]
+	self.Gear0 = ArgsTable[14]
 	self.Gear1 = ArgsTable[5]
 	self.Gear2 = ArgsTable[6]
 	self.Gear3 = ArgsTable[7]
@@ -153,9 +160,9 @@ function ENT:TriggerInput( iname , value )
 	if ( iname == "Gear" and self.Gear != math.floor(value) ) then
 		self:ChangeGear(math.floor(value))
 	elseif ( iname == "Clutch" ) then
-		self.Clutch = math.Clamp(1-value,0,1)
+		self.Clutch = math.Clamp(1-value,0,1)*self.MaxTorque
 	elseif ( iname == "Brake" ) then
-		self.Brake = math.Clamp(value,0,1)
+		self.Brake = math.Clamp(value,0,10)
 	end		
 
 end
@@ -164,16 +171,18 @@ function ENT:Think()
 
 	local Time = CurTime()
 	
-	if self.LastActive+2 > Time then
+	if self.LegalThink < Time and self.LastActive+2 > Time then
 		self:CheckRopes()
 		if self.Entity:GetPhysicsObject():GetMass() <= self.Mass or self.Entity:GetParent():IsValid() then
 			self.Legal = false
 		else 
 			self.Legal = true
 		end
+		
+		self.LegalThink = Time + (math.random(5,10))
 	end
 	
-	self.Entity:NextThink(Time+math.Rand(5,10))
+	self.Entity:NextThink(Time+0.2)
 	return true
 	
 end
@@ -204,7 +213,7 @@ function ENT:CheckRopes()
 	
 end
 
-function ENT:Calc()
+function ENT:Calc( Engine )
 	
 	if self.ChangeFinished < CurTime() and self.GearRatio != 0 then
 		self.InGear = true
@@ -235,21 +244,20 @@ function ENT:Calc()
 		self.WheelVel[Key] = VelDiff:Dot(WheelEnt:LocalToWorld(self.WheelAxis[Key])-WheelEnt:GetPos())
 		RPM = RPM - self.WheelVel[Key]
 	end
-	RPM = RPM / self.WheelNum / self.GearRatio / 6
-	
-	if self.InGear then
-		return RPM	
+	if self.GearRatio != 0 then
+		RPM = RPM / self.WheelNum / self.GearRatio / 6
 	else
-		return false
+		RPM = 0
 	end
 	
+	return RPM
 end
 
 function ENT:Act( Torque )
 
-	local GearedTq = Torque / self.GearRatio / self.WheelNum
+	local GearedTq = math.min(Torque,self.Clutch) / self.GearRatio / self.WheelNum
 	local BoxPhys = self:GetPhysicsObject()
-	Wire_TriggerOutput(self.Entity, "DebugN", Torque)
+	Wire_TriggerOutput(self.Entity, "DebugN", GearedTq)
 	
 	local BrakeMult = 0
 	for Key, OutputEnt in pairs(self.WheelLink) do
@@ -257,9 +265,9 @@ function ENT:Act( Torque )
 		local OutPos = OutputEnt:GetPos()
 		local TorqueAxis = OutputEnt:LocalToWorld(self.WheelAxis[Key]) - OutPos
 		local Cross = TorqueAxis:Cross( Vector(TorqueAxis.y,TorqueAxis.z,TorqueAxis.x) )
+		local Inertia = OutPhys:GetInertia()
 		if self.Brake > 0 then
-			BrakeMult = self.WheelVel[Key] * OutPhys:GetInertia() * self.Brake / 10
-			print(BrakeMult)
+			BrakeMult = self.WheelVel[Key] * Inertia * self.Brake / 10
 		end
 		local TorqueVec = TorqueAxis:Cross(Cross):GetNormalized() 
 		local Force = TorqueVec * GearedTq + TorqueVec * BrakeMult
@@ -268,7 +276,7 @@ function ENT:Act( Torque )
 	end
 
 	if BoxPhys:IsValid() then	
-		local Force = self:GetRight() * GearedTq - self:GetRight() * BrakeMult
+		local Force = self:GetForward() * GearedTq - self:GetForward() * BrakeMult
 		BoxPhys:ApplyForceOffset( Force, self:GetPos() + self:GetUp()*-40 )
 		BoxPhys:ApplyForceOffset( Force * -1, self:GetPos() + self:GetUp()*40 )
 	end
@@ -279,8 +287,8 @@ end
 
 function ENT:ChangeGear(value)
 
-	self.Gear = math.Clamp(value,-1,self.Gears)
-	self.GearRatio = self.GearTable[self.Gear] or 0
+	self.Gear = math.Clamp(value,0,self.Gears)
+	self.GearRatio = (self.GearTable[self.Gear] or 0)*self.GearTable[0]
 	self.ChangeFinished = CurTime() + self.SwitchTime
 	self.InGear = false
 	
