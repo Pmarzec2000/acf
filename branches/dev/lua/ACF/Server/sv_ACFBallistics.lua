@@ -92,7 +92,7 @@ function ACF_BulletClient( Index, Bullet, Type, Hit, HitPos )
 				Effect:SetOrigin( Bullet.Pos )
 			end
 			Effect:SetScale( Hit )	--Hit Type 
-		util.Effect( "ACF_BulletEffect", Effect )
+		util.Effect( "ACF_BulletEffect", Effect, true, true )
 
 	else
 		local Effect = EffectData()
@@ -103,7 +103,7 @@ function ACF_BulletClient( Index, Bullet, Type, Hit, HitPos )
 			Effect:SetOrigin( Bullet.Pos )
 			Effect:SetMagnitude( Bullet["Crate"] ) --Encodes the crate the ammo originates from so clientside knows the crate from wich to pull ammo data
 			Effect:SetScale( 0 )
-		util.Effect( "ACF_BulletEffect", Effect )
+		util.Effect( "ACF_BulletEffect", Effect, true, true )
 
 	end
 

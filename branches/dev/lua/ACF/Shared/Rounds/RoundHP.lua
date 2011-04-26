@@ -56,8 +56,8 @@ function ACF_HPConvert( Crate, PlayerData )		--Function to convert the player's 
 	Data["ProjMass"] = ( (Data["FrAera"] * Data["ProjLength"]) - Data["CavVol"] )*7.9/1000 --Volume of the projectile as a cylinder * fraction missing due to hollow point (Data5) * density of steel
 	local ExpRatio = (Data["CavVol"]/GUIData["ProjVolume"])
 	Data["ShovePower"] = 0.2 + ExpRatio/2
-	GUIData["ExpCaliber"] = Data["Caliber"] + ExpRatio*Data["ProjLength"]
-	Data["PenAera"] = (3.1416 * GUIData["ExpCaliber"]/2)^2^ACF.PenAreaMod
+	Data["ExpCaliber"] = Data["Caliber"] + ExpRatio*Data["ProjLength"]
+	Data["PenAera"] = (3.1416 * Data["ExpCaliber"]/2)^2^ACF.PenAreaMod
 	Data["DragCoef"] = ((Data["FrAera"]/10000)/Data["ProjMass"])
 	
 	Data["BoomPower"] = Data["PropMass"]
@@ -81,8 +81,9 @@ function ACF_HPNetworkData( Crate, BulletData )
 
 	Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])	
 	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
-	Crate:SetNetworkedInt("FillerMass",BulletData["FillerMass"])
 	Crate:SetNetworkedInt("PropMass",BulletData["PropMass"])
+	Crate:SetNetworkedInt("ExpCaliber",BulletData["ExpCaliber"])
+	
 	Crate:SetNetworkedInt("DragCoef",BulletData["DragCoef"])
 	Crate:SetNetworkedInt("MuzzleVel",BulletData["MuzzleVel"])
 	Crate:SetNetworkedInt("Tracer",BulletData["Tracer"])
@@ -93,7 +94,12 @@ function ACF_HPCrateDisplay( Crate )
 
 	local Tracer = ""
 	if Crate:GetNetworkedInt("Tracer") > 0 then Tracer = "-T" end
-	local txt = "Round Mass : "..(math.floor(Crate:GetNetworkedString("ProjMass")*1000)/1000).."\nPropellant : "..(math.floor(Crate:GetNetworkedString("PropMass")*1000)/1000)
+	
+	local ProjMass = math.floor(Crate:GetNetworkedString("ProjMass")*1000)
+	local PropMass = math.floor(Crate:GetNetworkedString("PropMass")*1000)
+	local ExpCaliber = math.floor(Crate:GetNetworkedString("ExpCaliber")*1000)/100
+	
+	local txt = "Round Mass : "..ProjMass.." g\nPropellant : "..PropMass.." g\nExpanded Caliber : "..ExpCaliber.." mm"
 	
 	return txt
 end

@@ -218,6 +218,11 @@ function ACF_HEATNetworkData( Crate, BulletData )
 	Crate:SetNetworkedInt("FillerMass",BulletData["FillerMass"])
 	Crate:SetNetworkedInt("PropMass",BulletData["PropMass"])
 	Crate:SetNetworkedInt("DragCoef",BulletData["DragCoef"])
+	
+	Crate:SetNetworkedInt("SlugMass",BulletData["SlugMass"])
+	Crate:SetNetworkedInt("SlugCaliber",BulletData["SlugCaliber"])
+	Crate:SetNetworkedInt("SlugDragCoef",BulletData["SlugDragCoef"])
+	
 	Crate:SetNetworkedInt("MuzzleVel",BulletData["MuzzleVel"])
 	Crate:SetNetworkedInt("Tracer",BulletData["Tracer"])
 
@@ -227,7 +232,12 @@ function ACF_HEATCrateDisplay( Crate )
 
 	local Tracer = ""
 	if Crate:GetNetworkedInt("Tracer") > 0 then Tracer = "-T" end
-	local txt = "Round Mass : "..(math.floor(Crate:GetNetworkedString("ProjMass")*1000)/1000).."\nPropellant : "..(math.floor(Crate:GetNetworkedString("PropMass")*1000)/1000)
+	
+	local ProjMass = math.floor(Crate:GetNetworkedString("ProjMass")*1000)
+	local PropMass = math.floor(Crate:GetNetworkedString("PropMass")*1000)
+	local FillerMass = math.floor(Crate:GetNetworkedString("FillerMass")*1000)
+	
+	local txt = "Round Mass : "..ProjMass.." g\nPropellant : "..PropMass.." g\nHE Content : "..FillerMass.." g"
 	
 	return txt
 end

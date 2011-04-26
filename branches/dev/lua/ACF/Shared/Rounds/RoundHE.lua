@@ -123,6 +123,7 @@ function ACF_HENetworkData( Crate, BulletData )
 	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
 	Crate:SetNetworkedInt("FillerMass",BulletData["FillerMass"])
 	Crate:SetNetworkedInt("PropMass",BulletData["PropMass"])
+	
 	Crate:SetNetworkedInt("DragCoef",BulletData["DragCoef"])
 	Crate:SetNetworkedInt("MuzzleVel",BulletData["MuzzleVel"])
 	Crate:SetNetworkedInt("Tracer",BulletData["Tracer"])
@@ -131,9 +132,15 @@ end
 
 function ACF_HECrateDisplay( Crate )
 
+
 	local Tracer = ""
 	if Crate:GetNetworkedInt("Tracer") > 0 then Tracer = "-T" end
-	local txt = "Round Mass : "..(math.floor(Crate:GetNetworkedString("ProjMass")*1000)/1000).." g \nPropellant : "..(math.floor(Crate:GetNetworkedString("PropMass")*1000)/1000).."g \n"
+	
+	local ProjMass = math.floor(Crate:GetNetworkedString("ProjMass")*1000)
+	local PropMass = math.floor(Crate:GetNetworkedString("PropMass")*1000)
+	local FillerMass = math.floor(Crate:GetNetworkedString("FillerMass")*1000)
+	
+	local txt = "Round Mass : "..ProjMass.." g\nPropellant : "..PropMass.." g\nHE Content : "..FillerMass.." g"
 	
 	return txt
 end

@@ -237,11 +237,11 @@ function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variab
 	if not acfmenupanel["CData"][Name.."_text"] and Desc then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
-			acfmenupanel["CData"][Name.."_text"]:SizeToContents()
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
-	acfmenupanel["CData"][Name.."_text"]:SizeToContents()
+	acfmenupanel["CData"][Name.."_text"]:SetSize( acfmenupanel.CustomDisplay:GetWide(), 10 )
+	acfmenupanel["CData"][Name.."_text"]:SizeToContentsX()
 	
 end
 
@@ -268,11 +268,11 @@ function PANEL:AmmoCheckbox(Name, Title, Desc) --Variable name in the table, sli
 	if not acfmenupanel["CData"][Name.."_text"] and Desc then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
-			acfmenupanel["CData"][Name.."_text"]:SizeToContents()
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
+			acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
-	acfmenupanel["CData"][Name.."_text"]:SizeToContents()
+	acfmenupanel["CData"][Name.."_text"]:SetSize( acfmenupanel.CustomDisplay:GetWide(), 10 )
+	acfmenupanel["CData"][Name.."_text"]:SizeToContentsX()
 	
 end
 
@@ -286,6 +286,7 @@ function PANEL:CPanelText(Name, Desc)
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
-	acfmenupanel["CData"][Name.."_text"]:SizeToContentsX()
+	acfmenupanel["CData"][Name.."_text"]:SetSize( acfmenupanel.CustomDisplay:GetWide(), 10 )
+	acfmenupanel["CData"][Name.."_text"]:SizeToContentsY()
 
 end

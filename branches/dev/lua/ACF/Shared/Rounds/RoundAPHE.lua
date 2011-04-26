@@ -155,7 +155,12 @@ function ACF_APHECrateDisplay( Crate )
 
 	local Tracer = ""
 	if Crate:GetNetworkedInt("Tracer") > 0 then Tracer = "-T" end
-	local txt = "Round Mass : "..(math.floor(Crate:GetNetworkedString("ProjMass")*1000)/1000).."\nPropellant : "..(math.floor(Crate:GetNetworkedString("PropMass")*1000)/1000)
+	
+	local ProjMass = math.floor(Crate:GetNetworkedString("ProjMass")*1000)
+	local PropMass = math.floor(Crate:GetNetworkedString("PropMass")*1000)
+	local FillerMass = math.floor(Crate:GetNetworkedString("FillerMass")*1000)
+	
+	local txt = "Round Mass : "..ProjMass.." g\nPropellant : "..PropMass.." g\nHE Content : "..FillerMass.." g"
 	
 	return txt
 end

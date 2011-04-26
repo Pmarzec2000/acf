@@ -44,21 +44,26 @@ function EFFECT:Init( data )
 	-- 89 GLASS
 
 	local Mat = Impact.MatType
+	local SmokeColor = Vector(90,90,90)
 	if Impact.HitSky or not Impact.Hit then
-		self:Airburst( Vector(90,90,90) )
+		SmokeColor = Vector(90,90,90)
+		self:Airburst( SmokeColor )
 	elseif Mat == 71 or Mat == 73 or Mat == 77 or Mat == 80 then -- Metal
-		self:Metal( Vector(170,170,170) )
+		SmokeColor = Vector(170,170,170)
+		self:Metal( SmokeColor )
 	elseif Mat == 68 or Mat == 79 then -- Dirt
-		self:Dirt( Vector(100,80,50) )	
+		SmokeColor = Vector(100,80,50)
+		self:Dirt( SmokeColor )	
 	elseif Mat == 78 then -- Sand
-		self:Sand( Vector(100,80,50) )
+		SmokeColor = Vector(100,80,50)
+		self:Sand( SmokeColor )
 	else -- Nonspecific
-		self:Concrete( Vector(90,90,90) )
+		SmokeColor = Vector(90,90,90)
+		self:Concrete( SmokeColor )
 	end
 	
-	print(Ground.HitWorld)
 	if Ground.HitWorld then
-		self:Shockwave( Ground )
+		self:Shockwave( Ground, SmokeColor )
 	end
 
  end   
@@ -156,18 +161,9 @@ function EFFECT:Core()
 	
 end
 
-function EFFECT:Shockwave( Ground )
+function EFFECT:Shockwave( Ground, SmokeColor )
 
 	local Mat = Ground.MatType
-	local SmokeColor = Vector(90,90,90)
-	if Mat == 71 or Mat == 73 or Mat == 77 or Mat == 80 then -- Metal
-		SmokeColor = Vector(170,170,170)
-	elseif Mat == 68 or Mat == 79 then -- Dirt
-		SmokeColor = Vector(100,80,50)
-	else -- Nonspecific
-		SmokeColor = Vector(180,170,70)
-	end
-
 	local Radius = (1-Ground.Fraction)*self.Radius
 	local Density = 15*Radius
 	local Angle = Ground.HitNormal:Angle()

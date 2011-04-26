@@ -783,7 +783,7 @@ local Ammo4x4x8 = {}
 	Ammo4x4x8.name = "Modular Ammo Crate"
 	Ammo4x4x8.desc = "Modular Ammo Crate 4x4x8 Size\n"
 	Ammo4x4x8.model = "models/ammocrates/ammocrate_4x4x8.mdl"
-	Ammo4x4x8.weight = 480
-AmmoTable["Ammo4x4x6"] = Ammo4x4x6
+	Ammo4x4x8.weight = 640
+AmmoTable["Ammo4x4x8"] = Ammo4x4x8
 	
 list.Set( "ACFEnts", "Ammo", AmmoTable )	--end ammo containers listing

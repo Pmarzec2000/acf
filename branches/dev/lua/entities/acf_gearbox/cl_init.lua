@@ -41,6 +41,8 @@ function ACFGearboxGUICreate( Table )
 		acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel , entity ) end
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 	
+	acfmenupanel:CPanelText("Desc", Table.desc)	--Description (Name, Desc)
+	
 	for ID,Value in pairs(acfmenupanel.GearboxData[Table.id]["GearTable"]) do
 		if ID > 0 then
 			ACF_GearsSlider(ID, Value, Table.id)
@@ -50,7 +52,7 @@ function ACFGearboxGUICreate( Table )
 	end
 	
 	acfmenupanel:CPanelText("Desc", Table.desc)
-	acfmenupanel:CPanelText("MaxTorque", "MaxTorque : "..(Table.maxtorque).."N-M")
+	acfmenupanel:CPanelText("MaxTorque", "MaxTorque : "..(Table.maxtq).."N-M")
 	acfmenupanel:CPanelText("Weight", "Weight : "..Table.weight.."kg")
 	
 	acfmenupanel.CustomDisplay:PerformLayout()
@@ -68,7 +70,7 @@ function ACF_GearsSlider(Gear, Value, ID, Desc)
 			acfmenupanel["CData"][Gear]["Gear"] = Gear
 			acfmenupanel["CData"][Gear]["ID"] = ID
 			acfmenupanel["CData"][Gear]:SetValue(Value)
-			RunConsoleCommand( "acfmenu_data"..Gear, val )
+			RunConsoleCommand( "acfmenu_data"..Gear, Value )
 			acfmenupanel["CData"][Gear].OnValueChanged = function( slider, val )
 				acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
 				RunConsoleCommand( "acfmenu_data"..Gear, val )

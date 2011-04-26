@@ -42,13 +42,13 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.Id = Id
 	Engine.Model = List["Mobility"][Id]["model"]
 	Engine.SoundPath = List["Mobility"][Id]["sound"]
-	Engine.Mass = List["Mobility"][Id]["weight"]
+	Engine.Weight = List["Mobility"][Id]["weight"]
 	Engine.PeakTorque = List["Mobility"][Id]["torque"]
 	Engine.IdleRPM = List["Mobility"][Id]["idlerpm"]
 	Engine.PeakMinRPM = List["Mobility"][Id]["peakminrpm"]
 	Engine.PeakMaxRPM = List["Mobility"][Id]["peakmaxrpm"]
 	Engine.LimitRPM = List["Mobility"][Id]["limitprm"]
-	Engine.Inertia = Engine.Mass*0.0001*(3.1416)^2
+	Engine.Inertia = Engine.Weight*0.001*(3.1416)^2
 	
 	Engine.FlyRPM = 0
 	Engine:SetModel( Engine.Model )	
@@ -58,10 +58,12 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine:PhysicsInit( SOLID_VPHYSICS )      	
 	Engine:SetMoveType( MOVETYPE_VPHYSICS )     	
 	Engine:SetSolid( SOLID_VPHYSICS )
+	
+	Engine.Out = Engine:WorldToLocal(Engine:GetAttachment(Engine:LookupAttachment( "driveshaft" )).Pos)
 
 	local phys = Engine:GetPhysicsObject()  	
 	if (phys:IsValid()) then 
-		phys:SetMass( Engine.Mass ) 
+		phys:SetMass( Engine.Weight ) 
 	end
 	
 	undo.Create("ACF Engine")
@@ -112,9 +114,9 @@ function ENT:Think()
 			local RPM = self:CalcRPM( EngPhys )
 		end
 		
-		if self.LastCheck > CurTime() then
+		if self.LastCheck < CurTime() then
 			self:CheckRopes()
-			if self.Entity:GetPhysicsObject():GetMass() <= self.Mass or self.Entity:GetParent():IsValid() then
+			if self.Entity:GetPhysicsObject():GetMass() < self.Weight or self.Entity:GetParent():IsValid() then
 				self.Legal = false
 			else 
 				self.Legal = true
@@ -180,7 +182,7 @@ function ENT:ACFInit()
 	
 	self.LastThink = CurTime()
 	self.Torque = self.PeakTorque
-	self.FlyRPM = 0
+	self.FlyRPM = self.IdleRPM*1.5
 
 end
 
@@ -201,18 +203,18 @@ function ENT:CalcRPM( EngPhys )
 		Clutch = Clutch + Gearbox.Clutch
 	end
 	
+	local AutoClutch = math.min(math.max(self.FlyRPM-self.IdleRPM,0)/(self.IdleRPM+self.LimitRPM/10),1)
 	RPM = RPM / Boxes
 	local TorqueDiff = (self.FlyRPM - RPM)*self.Inertia	
 	
 	for Key, Gearbox in pairs(self.GearLink) do	--Then give the gearboxes the powa
-		Gearbox:Act(math.min(self.Torque/Boxes,Gearbox.Clutch)*self.MassRatio)
+		Gearbox:Act(math.min(self.Torque*AutoClutch/Boxes,Gearbox.Clutch)*self.MassRatio)
 	end	
 
-	local ClutchRatio = math.min(Clutch/math.max(TorqueDiff,0.05),1)	
+	local ClutchRatio = math.min(Clutch/math.max(TorqueDiff,0.05),1)
 	self.Torque = self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM/self.PeakMinRPM , (self.LimitRPM - self.FlyRPM)/(self.LimitRPM - self.PeakMaxRPM), 1 ),0 ) --Calculate the current torque from flywheel RPM
-	self.FlyRPM = self.FlyRPM + (self.Torque - TorqueDiff*ClutchRatio)/self.Inertia		--Let's accelerate the flywheel based on that torque	
-	print(ClutchRatio)
-	print(TorqueDiff)
+	local Drag = self.PeakTorque*(math.max(self.FlyRPM-self.IdleRPM,0)/self.PeakMaxRPM)*(1-self.Throttle)
+	self.FlyRPM = math.max(self.FlyRPM + (self.Torque - TorqueDiff*ClutchRatio*AutoClutch)/self.Inertia - Drag,1)		--Let's accelerate the flywheel based on that torque	
 	
 	table.remove( self.RPM, 10 )	--Then we calc a smoothed RPM value for the sound effects
 	table.insert( self.RPM, 1, self.FlyRPM )
@@ -255,6 +257,12 @@ function ENT:CheckRopes()
 		else
 			self:Unlink( Ent )
 		end
+		
+		local DrvAngle = (self.Entity:LocalToWorld(self.Out) - Ent:LocalToWorld(Ent.In)):GetNormalized():DotProduct( self:GetForward() )
+		if ( DrvAngle < 0.7 ) then
+			self:Unlink( Ent )
+		end
+		
 	end
 	
 end
@@ -271,16 +279,23 @@ function ENT:Link( Target )
 	end
 	
 	if not Duplicate then
+		
+		local InPos = Target:LocalToWorld(Target.In)
+		local OutPos = self.Entity:LocalToWorld(self.Out)
+		local DrvAngle = (OutPos - InPos):GetNormalized():DotProduct((self:GetForward()))
+		if ( DrvAngle < 0.7 ) then
+			return 'ERROR : Excessive driveshaft angle'
+		end
+		
 		table.insert(self.GearLink,Target)
 		table.insert(Target.Master,self.Entity)
-		
-		local RopeL = (self.Entity:GetPos()-Target:GetPos()):Length()
-		constraint.Rope( self.Entity, Target, 0, 0, Vector(0,0,0), Vector(0,0,0), RopeL, RopeL*0.2, 0, 1, "cable/cable2", false )
+		local RopeL = (OutPos-InPos):Length()
+		constraint.Rope( self.Entity, Target, 0, 0, self.Out, Target.In, RopeL, RopeL*0.2, 0, 1, "cable/cable2", false )
 		table.insert(self.GearRope,RopeL)
 		
 		return false
 	else
-		return ("This Gearbox is already linked to this Engine")
+		return ('ERROR : Gearbox already linked to this Engine')
 	end
 	
 	
@@ -291,6 +306,16 @@ function ENT:Unlink( Target )
 	local Success = false
 	for Key,Value in pairs(self.GearLink) do
 		if Value == Target then
+		
+			local Constraints = constraint.FindConstraints(Value, "Rope")
+			if Constraints then
+				for Key,Rope in pairs(Constraints) do
+					if Rope.Ent1 == self.Entity or Rope.Ent2 == self.Entity then
+						Rope.Constraint:Remove()
+					end
+				end
+			end
+			
 			table.remove(self.GearLink,Key)
 			table.remove(self.GearRope,Key)
 			Success = true
@@ -300,7 +325,7 @@ function ENT:Unlink( Target )
 	if Success then
 		return false
 	else
-		return ("Did not find the Gearbox to unlink")
+		return ('ERROR : Did not find the Gearbox to unlink')
 	end
 	
 end
