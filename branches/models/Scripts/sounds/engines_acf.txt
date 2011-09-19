@@ -52,6 +52,31 @@
 	"wave"				"^ACF_engines/i4_diesellarge.wav"
 }
 
+"I4P.Small"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_90DB"
+	"wave"				"^ACF_engines/i4_petrolsmall.wav"
+}
+"I4P.Medium"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_100DB"
+	"wave"				"^ACF_engines/i4_petrolmedium.wav"
+}
+"I4P.Large"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_120DB"
+	"wave"				"^ACF_engines/i4_petrollarge.wav"
+}
+
 
 
 
