@@ -1,7 +1,7 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models/engines/inline4_sheet"
-	"$bumpmap" "models/engines/inline4_sheet_normal"
+	"$basetexture" "models/engines/inline6_sheet"
+	"$bumpmap" "models/engines/inline6_sheet_normal"
 	"$surfaceprop" "metal"
 	"$envmap" "env_cubemap"
 	"$normalmapalphaenvmapmask" "1"
