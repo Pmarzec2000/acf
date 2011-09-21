@@ -77,6 +77,56 @@
 	"wave"				"^ACF_engines/i4_petrollarge.wav"
 }
 
+"L6D.Small"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_90DB"
+	"wave"				"^ACF_engines/l6_dieselsmall.wav"
+}
+"L6D.Medium"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_100DB"
+	"wave"				"^ACF_engines/l6_dieselmedium.wav"
+}
+"L6D.Large"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_120DB"
+	"wave"				"^ACF_engines/l6_diesellarge2.wav"
+}
+
+"L6P.Small"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_90DB"
+	"wave"				"^ACF_engines/l6_petrolsmall2.wav"
+}
+"L6P.Medium"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_100DB"
+	"wave"				"^ACF_engines/l6_petrolmedium.wav"
+}
+"L6P.Large"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_120DB"
+	"wave"				"^ACF_engines/l6_petrollarge2.wav"
+}
+
 
 
 
