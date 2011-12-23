@@ -72,7 +72,7 @@
 	"volume"			"1.0"
 	"pitch"				"PITCH_NORM"
 	"soundlevel"			"SNDLVL_100DB"
-	"wave"				"^ACF_engines/i4_diesel2.wav"
+	"wave"				"^ACF_engines/i4_dieselmedium.wav"
 }
 "I4D.Large"
 {
@@ -89,7 +89,7 @@
 	"volume"			"1.0"
 	"pitch"				"PITCH_NORM"
 	"soundlevel"			"SNDLVL_90DB"
-	"wave"				"^ACF_engines/i4_petrolsmall.wav"
+	"wave"				"^ACF_engines/i4_petrolsmall2.wav"
 }
 "I4P.Medium"
 {
@@ -97,7 +97,7 @@
 	"volume"			"1.0"
 	"pitch"				"PITCH_NORM"
 	"soundlevel"			"SNDLVL_100DB"
-	"wave"				"^ACF_engines/i4_petrolmedium.wav"
+	"wave"				"^ACF_engines/i4_petrolmedium2.wav"
 }
 "I4P.Large"
 {
@@ -157,6 +157,66 @@
 	"soundlevel"			"SNDLVL_120DB"
 	"wave"				"^ACF_engines/l6_petrollarge2.wav"
 }
+
+
+
+
+
+
+
+
+
+
+"V12D.Small"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_90DB"
+	"wave"				"^ACF_engines/v12_dieselsmall.wav"
+}
+"V12D.Medium"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_100DB"
+	"wave"				"^ACF_engines/v12_dieselmedium.wav"
+}
+"V12D.Large"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_120DB"
+	"wave"				"^ACF_engines/v12_diesellarge.wav"
+}
+
+"V12P.Small"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_90DB"
+	"wave"				"^ACF_engines/v12_petrolsmall.wav"
+}
+"V12P.Medium"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_100DB"
+	"wave"				"^ACF_engines/v12_petrolmedium.wav"
+}
+"V12P.Large"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_120DB"
+	"wave"				"^ACF_engines/v12_petrollarge.wav"
+}
+
 
 
 
