@@ -1,4 +1,4 @@
-#summary This describes the code structure of the AmmoType files
+#summary Describes the code layout of the AmmoType files
 
 = RoundXX.lua =
 
