@@ -6,11 +6,7 @@ local DefTable = {}
 	DefTable.model = "models/munitions/round_100mm_shot.mdl"	--Shell flight model
 	DefTable.desc = "A shaped charge explosive shell, detonating on impact and sending a stream of molten metal do penetrate armour along with normal, if reduced, explosive effects"
 	DefTable.netid = 4											--Unique ammotype ID for network transmission
-	
-	DefTable.limitvel = 100										--Most efficient penetration speed in m/s
-	DefTable.ketransfert = 0.1									--Kinetic energy transfert to the target for movement purposes
-	DefTable.ricochet = 60										--Base ricochet angle
-	
+		
 	DefTable.create = function( Gun, BulletData ) ACF_HEATCreate( Gun, BulletData ) end
 	DefTable.convert = function( Crate, Table ) local Result = ACF_HEATConvert( Crate, Table ) return Result end
 	DefTable.network = function( Crate, BulletData ) ACF_HEATNetworkData( Crate, BulletData ) end
@@ -52,7 +48,7 @@ function ACF_HEATConvert( Crate, PlayerData )		--Function to convert the player'
 	ConeLength, ConeAera, AirVol = ACF_HEATConeCalc( PlayerData["Data6"], Data["Caliber"]/2, PlayerData["ProjLength"] )
 	Data["ProjMass"] = math.max(GUIData["ProjVolume"]-PlayerData["Data5"],0)*7.9/1000 + math.min(PlayerData["Data5"],GUIData["ProjVolume"])*ACF.HEDensity/1000 + ConeAera*ConeThick*7.9/1000 --Volume of the projectile as a cylinder - Volume of the filler - Volume of the crush cone * density of steel + Volume of the filler * density of TNT + Aera of the cone * thickness * density of steel
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
-	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
+	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], Data["LimitVel"] )
 	
 	local MaxVol = 0
 	local MaxLength = 0
@@ -60,11 +56,11 @@ function ACF_HEATConvert( Crate, PlayerData )		--Function to convert the player'
 	MaxVol, MaxLength, MaxRadius = ACF_RoundShellCapacity( Energy.Momentum, Data["FrAera"], Data["Caliber"], Data["ProjLength"] )
 		
 	GUIData["MinConeAng"] = 0
-	GUIData["MaxConeAng"] = math.deg( math.atan((Data["ProjLength"] - ConeThick )/Data["Caliber"]/2) )
+	GUIData["MaxConeAng"] = math.deg( math.atan((Data["ProjLength"] - ConeThick )/(Data["Caliber"]/2)) )
 	GUIData["ConeAng"] = math.Clamp(PlayerData["Data6"]*1, GUIData["MinConeAng"], GUIData["MaxConeAng"])
 	ConeLength, ConeAera, AirVol = ACF_HEATConeCalc( GUIData["ConeAng"], Data["Caliber"]/2, Data["ProjLength"] )
 	local ConeVol = ConeAera * ConeThick
-	
+		
 	GUIData["MinFillerVol"] = 0
 	GUIData["MaxFillerVol"] = math.max(MaxVol -  AirVol - ConeVol,GUIData["MinFillerVol"])
 	GUIData["FillerVol"] = math.Clamp(PlayerData["Data5"]*1,GUIData["MinFillerVol"],GUIData["MaxFillerVol"])
@@ -72,7 +68,7 @@ function ACF_HEATConvert( Crate, PlayerData )		--Function to convert the player'
 	Data["FillerMass"] = GUIData["FillerVol"] * ACF.HEDensity/1000
 	Data["ProjMass"] = math.max(GUIData["ProjVolume"]-GUIData["FillerVol"]- AirVol-ConeVol,0)*7.9/1000 + Data["FillerMass"] + ConeVol*7.9/1000
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
-	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
+	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], Data["LimitVel"] )
 	
 	--Let's calculate the actual HEAT slug
 	Data["SlugMass"] = ConeVol*7.9/1000
@@ -83,6 +79,7 @@ function ACF_HEATConvert( Crate, PlayerData )		--Function to convert the player'
 	local SlugFrAera = 3.1416 * (Data["SlugCaliber"]/2)^2
 	Data["SlugPenAera"] = SlugFrAera^ACF.PenAreaMod
 	Data["SlugDragCoef"] = ((SlugFrAera/10000)/Data["SlugMass"])
+	Data["SlugRicochet"] = 	500									--Base ricochet angle (The HEAT slug shouldn't ricochet at all)
 	
 	Data["CasingMass"] = Data["ProjMass"] - Data["FillerMass"] - ConeVol*7.9/1000
 
@@ -90,6 +87,9 @@ function ACF_HEATConvert( Crate, PlayerData )		--Function to convert the player'
 	Data["ShovePower"] = 0.1
 	Data["PenAera"] = Data["FrAera"]^ACF.PenAreaMod
 	Data["DragCoef"] = ((Data["FrAera"]/10000)/Data["ProjMass"])
+	Data["LimitVel"] = 100										--Most efficient penetration speed in m/s
+	Data["KETransfert"] = 0.1									--Kinetic energy transfert to the target for movement purposes
+	Data["Ricochet"] = 60										--Base ricochet angle
 	
 	Data["Detonated"] = false
 	Data["BoomPower"] = Data["PropMass"] + Data["FillerMass"]
@@ -114,7 +114,7 @@ end
 
 function ACF_HEATConeCalc( ConeAngle, Radius, Length )
 
-	local ConeLength = math.tan(math.rad(ConeAngle))
+	local ConeLength = math.tan(math.rad(ConeAngle))*Radius
 	local ConeAera = 3.1416 * Radius * (Radius^2 + ConeLength^2)^0.5
 	local ConeVol = (3.1416 * Radius^2 * ConeLength)/3
 
@@ -133,7 +133,7 @@ function ACF_HEATPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 			
 		if Bullet["Detonated"] then
 			
-			local Speed = Bullet["Flight"]:Length()
+			local Speed = Bullet["Flight"]:Length() / ACF.VelScale
 			local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], 999999 )
 			local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 			
@@ -149,8 +149,8 @@ function ACF_HEATPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 	
 		else
 			
-			local Speed = Bullet["Flight"]:Length()
-			local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+			local Speed = Bullet["Flight"]:Length() / ACF.VelScale
+			local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
 			local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 			
 			if HitRes.Ricochet then
@@ -177,7 +177,7 @@ function ACF_HEATWorldImpact( Index, Bullet, HitPos, HitNormal )
 		ACF_HEATDetonate( Index, Bullet, HitPos, HitNormal )
 	end
 	
-	local Energy = ACF_Kinetic( Bullet["Flight"]:Length(), Bullet["ProjMass"], 999999 )
+	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], 999999 )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
 		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 		ACF_CalcBulletFlight( Index, Bullet )
@@ -207,6 +207,11 @@ function ACF_HEATDetonate( Index, Bullet, HitPos, HitNormal )
 	Bullet["ProjMass"] = Bullet["SlugMass"]
 	Bullet["Caliber"] = Bullet["SlugCaliber"]
 	Bullet["PenAera"] = Bullet["SlugPenAera"]
+	Bullet["Ricochet"] = Bullet["SlugRicochet"]
+	
+	local DeltaTime = SysTime() - Bullet["LastThink"]
+	Bullet["StartTrace"] = Bullet["Pos"] - Bullet["Flight"]:GetNormalized()*math.min(ACF.PhysMaxVel*DeltaTime,Bullet["FlightTime"]*Bullet["Flight"]:Length())
+	Bullet["NextPos"] = Bullet["Pos"] + (Bullet["Flight"] * ACF.VelScale * DeltaTime)		--Calculates the next shell position
 	
 end
 

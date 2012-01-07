@@ -38,6 +38,15 @@ function PANEL:Init( )
 		
 	end
 	
+	local HomeNode = self.WeaponSelect:AddNode( "ACF Home" )
+	HomeNode.mytable = {}
+		HomeNode.mytable.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
+		HomeNode.mytable.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
+	function HomeNode:DoClick()
+		acfmenupanel:UpdateDisplay(self.mytable)
+	end
+	HomeNode.Icon:SetImage( "gui/silkicons/newspaper" )
+	
 	local RoundAttribs = list.Get("ACFRoundTypes")
 	self.RoundAttribs = {}
 	for ID,Table in pairs(RoundAttribs) do
@@ -79,30 +88,42 @@ function PANEL:Init( )
 	end
 	
 	local Mobility = self.WeaponSelect:AddNode( "Mobility" )
+	local Engines = Mobility:AddNode( "Engines" )
+	local Gearboxes = Mobility:AddNode( "Gearboxes" )
 	for MobilityID,MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		
-		local EndNode = Mobility:AddNode( MobilityTable.name or "No Name" )
+		local NodeAdd = Mobility
+		if MobilityTable.ent == "acf_engine" then
+			NodeAdd = Engines
+		elseif MobilityTable.ent == "acf_gearbox" then
+			NodeAdd = Gearboxes
+		end
+		
+		local EndNode = NodeAdd:AddNode( MobilityTable.name or "No Name" )
 		EndNode.mytable = MobilityTable
 		function EndNode:DoClick()
 			RunConsoleCommand( "acfmenu_type", self.mytable.type )
 			acfmenupanel:UpdateDisplay( self.mytable )
 		end
 		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
-		
+
 	end
 	
-	local Sensors = self.WeaponSelect:AddNode( "Sensors" )
-	for SensorsID,SensorsTable in pairs(self.WeaponDisplay["Sensors"]) do
+	
+
+	
+	-- local Sensors = self.WeaponSelect:AddNode( "Sensors" )
+	-- for SensorsID,SensorsTable in pairs(self.WeaponDisplay["Sensors"]) do
 		
-		local EndNode = Sensors:AddNode( SensorsTable.name or "No Name" )
-		EndNode.mytable = SensorsTable
-		function EndNode:DoClick()
-			RunConsoleCommand( "acfmenu_type", self.mytable.type )
-			acfmenupanel:UpdateDisplay( self.mytable )
-		end
-		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+		-- local EndNode = Sensors:AddNode( SensorsTable.name or "No Name" )
+		-- EndNode.mytable = SensorsTable
+		-- function EndNode:DoClick()
+			-- RunConsoleCommand( "acfmenu_type", self.mytable.type )
+			-- acfmenupanel:UpdateDisplay( self.mytable )
+		-- end
+		-- EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
 		
-	end
+	-- end
 	
 end
 
@@ -165,11 +186,62 @@ function PANEL:PerformLayout()
 	if acfmenupanel.CustomDisplay then
 		--Custom panel
 		acfmenupanel.CustomDisplay:SetPos( 0, ypos )
-		acfmenupanel.CustomDisplay:SetSize( acfmenupanel:GetWide(), 800 )
+		acfmenupanel.CustomDisplay:SetSize( acfmenupanel:GetWide(), acfmenupanel:GetTall() )
 		ypos = acfmenupanel.CustomDisplay.Y + acfmenupanel.CustomDisplay:GetTall() + vspacing
 	end
 	
 end
+
+function ACFHomeGUICreate( Table )
+
+	if not acfmenupanel.CustomDisplay then return end
+	
+	acfmenupanel:CPanelText("Header", "Changelog")
+	
+	acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
+	for Rev,Changes in pairs(acfmenupanel.Changelog) do
+		
+		local Node = acfmenupanel["CData"]["Changelist"]:AddNode( "Rev "..Rev )
+		Node.mytable = {}
+			Node.mytable["rev"] = Rev
+		function Node:DoClick()
+			acfmenupanel:UpdateAttribs( Node.mytable )
+		end
+		Node.Icon:SetImage( "gui/silkicons/newspaper" )
+		
+	end	
+	acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
+	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
+	
+	acfmenupanel.CustomDisplay:PerformLayout()
+	
+	acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
+	
+end
+
+function ACFHomeGUIUpdate( Table )
+	
+	acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
+	acfmenupanel.CustomDisplay:PerformLayout()
+	
+end
+
+function ACFChangelogHTTPCallBack(contents , size)
+	
+	local Temp = string.Explode( "*", contents )
+	acfmenupanel.Changelog = {}
+	for Key,String in pairs(Temp) do
+		acfmenupanel.Changelog[tonumber(string.sub(String,2,3))] = string.Trim(string.sub(String, 5))
+	end
+	table.SortByKey(acfmenupanel.Changelog,true)
+	
+	local Table = {}
+		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
+		Table.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
+	acfmenupanel:UpdateDisplay( Table )
+
+end
+http.Get("http://acf.googlecode.com/svn/trunk/changelog.txt", "", ACFChangelogHTTPCallBack) 
 
 function PANEL:AmmoSelect()
 	

@@ -10,7 +10,13 @@ function ACF_CreateBullet( BulletData )
 	end
 	
 	BulletData["Accel"] = Vector(0,0,server_settings.Int( "sv_gravity", 600 )*-1)			--Those are BulletData settings that are global and shouldn't change round to round
-	BulletData["LastThink"] = CurTime() - 0.015
+	BulletData["LastThink"] = SysTime()
+	BulletData["FlightTime"] = 0
+	BulletData["TraceBackComp"] = 0
+	if BulletData["Gun"]:IsValid() then											--Check the Gun's velocity and add a modifier to the flighttime so the traceback system doesn't hit the originating contraption if it's moving along the shell path
+		BulletData["TraceBackComp"] = BulletData["Gun"]:GetPhysicsObject():GetVelocity():Dot(BulletData["Flight"]:GetNormalized())
+		--print(BulletData["TraceBackComp"])
+	end
 	BulletData["Filter"] = { BulletData["Gun"] }
 	BulletData["Index"] = ACF.CurBulletIndex
 		
@@ -35,17 +41,21 @@ function ACF_RemoveBullet( Index )
 
 end
 
-function ACF_CalcBulletFlight( Index, Bullet )
-	--print("Bullet CalcFlight")
+function ACF_CalcBulletFlight( Index, Bullet, BackTraceOverride )
 	
 	if not Bullet.LastThink then ACF_RemoveBullet( Index ) return end
-	local Time = CurTime()
+	if BackTraceOverride then Bullet.FlightTime = 0 end
+	local Time = SysTime()
 	local DeltaTime = Time - Bullet.LastThink
-	Bullet.LastThink = Time
 	
-	local Drag = Bullet.Flight:GetNormalized() * (Bullet.DragCoef * (Bullet.Flight:Length())^2)/ACF.DragDiv
+	local Speed = Bullet.Flight:Length()
+	local Drag = Bullet.Flight:GetNormalized() * (Bullet.DragCoef * Speed^2)/ACF.DragDiv
 	Bullet.NextPos = Bullet.Pos + (Bullet.Flight * ACF.VelScale * DeltaTime)		--Calculates the next shell position
-	Bullet.Flight = Bullet.Flight + (Bullet.Accel * ACF.VelScale - Drag)*DeltaTime				--Calculates the next shell vector
+	Bullet.Flight = Bullet.Flight + (Bullet.Accel - Drag)*DeltaTime				--Calculates the next shell vector
+	Bullet.StartTrace = Bullet.Pos - Bullet.Flight:GetNormalized()*math.min(ACF.PhysMaxVel*DeltaTime,Bullet.FlightTime*Speed-Bullet.TraceBackComp*DeltaTime)
+	
+	Bullet.LastThink = Time
+	Bullet.FlightTime = Bullet.FlightTime + DeltaTime
 	
 	ACF_DoBulletsFlight( Index, Bullet )
 	
@@ -54,7 +64,7 @@ end
 function ACF_DoBulletsFlight( Index, Bullet )
 
 	local FlightTr = { }
-		FlightTr.start = Bullet.Pos
+		FlightTr.start = Bullet.StartTrace
 		FlightTr.endpos = Bullet.NextPos
 		FlightTr.filter = Bullet.Filter
 	local FlightRes = util.TraceLine(FlightTr)					--Trace to see if it will hit anything
@@ -66,7 +76,7 @@ function ACF_DoBulletsFlight( Index, Bullet )
 			ACF_DoBulletsFlight( Index, Bullet )
 			--Msg("Retrying\n")
 		elseif Retry == "Ricochet"  then
-			ACF_CalcBulletFlight( Index, Bullet )
+			ACF_CalcBulletFlight( Index, Bullet, true )
 		else						--Else end the flight here
 			ACF_BulletEndFlight = ACF.RoundTypes[Bullet.Type]["endflight"]
 			ACF_BulletEndFlight( Index, Bullet, FlightRes.HitPos, FlightRes.HitNormal )	

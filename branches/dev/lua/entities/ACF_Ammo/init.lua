@@ -5,22 +5,73 @@ include('shared.lua')
 
 function ENT:Initialize()
 	
-	self.KillAction = true
-	self.DamageAction = true
+	self.SpecialHealth = true	--If true needs a special ACF_Activate function
+	self.SpecialDamage = true	--If true needs a special ACF_OnDamage function
 	self.IsExplosive = true
 	self.Exploding = false
 	self.Damaged = false
 	self.CanUpdate = true
+	self.Load = false
 	
 	self.Master = {}
 	self.Sequence = 0
 	
 	self.WireDebugName = "Ammo Crate"
-	--self.Inputs = Wire_CreateInputs( self.Entity, { "Sequence"} )
+	self.Inputs = Wire_CreateInputs( self.Entity, { "Active"} )
 	self.Outputs = Wire_CreateOutputs( self.Entity, { "Munitions" , "On Fire" } )
 		
 	self.NextThink = CurTime() +  1
 	
+end
+
+function ENT:ACF_Activate( Recalc )
+	
+	local EmptyMass = math.max(self.EmptyMass, self:GetPhysicsObject():GetMass() - self:AmmoMass())
+	local Size = self.OBBMaxs(self) - self.OBBMins(self)
+	local Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 --Converting from square in to square cm, fuck imperial
+	local Volume = Size.x * Size.y * Size.z * 16.38
+	local Armour = EmptyMass*1000 / Aera / 0.78 --So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
+	local Health = Volume/ACF.Threshold							--Setting the threshold of the prop aera gone 
+	local Percent = 1 
+	
+	if Recalc then
+		Percent = self.ACF.Health/self.ACF.MaxHealth
+	end
+	self.ACF = {} 
+	self.ACF.Health = Health * Percent
+	self.ACF.MaxHealth = Health
+	self.ACF.Armour = Armour * (0.5 + Percent/2)
+	self.ACF.MaxArmour = Armour
+	self.ACF.Type = nil
+	self.ACF.Mass = self.Mass
+	self.ACF.Density = (self:GetPhysicsObject():GetMass()*1000)/Volume
+	self.ACF.Type = "Prop"
+	
+end
+
+function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This function needs to return HitRes
+
+	local HitRes = ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor )	--Calling the standard damage prop function
+	
+	if self.Exploding or not self.IsExplosive then return HitRes end
+	if HitRes.Kill then
+		self.Exploding = true
+		if self.Ammo > 1 then
+			ACF_AmmoExplosion( self.Entity , self.Entity:GetPos() )
+		else
+			ACF_HEKill( self.Entity , VectorRand() )
+		end
+	end
+	
+	if self.Damaged then return HitRes end
+	local Ratio = (HitRes.Damage/self.BulletData["RoundVolume"])^0.2
+	--print(Ratio)
+	if ( Ratio * self.Capacity/self.Ammo ) > math.Rand(0,1) then  
+		self.Damaged = CurTime() + (5 - Ratio*3)
+		Wire_TriggerOutput(self.Entity, "On Fire", 1)
+	end
+	
+	return HitRes --This function needs to return HitRes
 end
 
 function MakeACF_Ammo(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10)
@@ -47,7 +98,7 @@ function MakeACF_Ammo(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, 
 	
 	Ammo.Ammo = Ammo.Capacity
 	Ammo.EmptyMass = ACF.Weapons["Ammo"][Ammo.Id]["weight"]
-	Ammo.Mass = Ammo.EmptyMass + math.floor( (Ammo.BulletData["ProjMass"] + Ammo.BulletData["PropMass"]) * Ammo.Ammo * 2 )
+	Ammo.Mass = Ammo.EmptyMass + Ammo:AmmoMass()
 	
 	local phys = Ammo:GetPhysicsObject()  	
 	if (phys:IsValid()) then 
@@ -88,12 +139,13 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		Feedback = "New ammo type loaded, crate unlinked"
 	end
 	
-	local AmmoPercent = self.Ammo/self.Capacity
+	local AmmoPercent = self.Ammo/math.max(self.Capacity,1)
 	
 	self:CreateAmmo(ArgsTable[4], ArgsTable[5], ArgsTable[6], ArgsTable[7], ArgsTable[8], ArgsTable[9], ArgsTable[10], ArgsTable[11], ArgsTable[12], ArgsTable[13], ArgsTable[14])
 	
 	self.Ammo = math.floor(self.Capacity*AmmoPercent)
-	self.Mass = self.EmptyMass + math.floor( (self.BulletData["ProjMass"] + self.BulletData["PropMass"]) * self.Ammo * 2 )
+	local AmmoMass = self:AmmoMass()
+	self.Mass = math.min(self.EmptyMass, self.Entity:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
 		
 	return FeedBack
 end
@@ -140,17 +192,38 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 
 end
 
+function ENT:AmmoMass() --Returns what the ammo mass would be if the crate was full
+	return math.floor( (self.BulletData["ProjMass"] + self.BulletData["PropMass"]) * self.Capacity * 2 )
+end
+
 function ENT:TriggerInput( iname , value )
 
-	if (iname == "Sequence") then
-		self.Sequence = value
+	if (iname == "Active") then
+		if value > 0 then
+			self.Load = true
+			self:FirstLoad()
+		else
+			self.Load = false
+		end
 	end		
 
 end
 
+function ENT:FirstLoad()
+
+	for Key,Value in pairs(self.Master) do
+		if self.Master[Key] and self.Master[Key]:IsValid() and self.Master[Key]["BulletData"]["Type"] == "Empty" then
+			--print("Send FirstLoad")
+			self.Master[Key]:UnloadAmmo()
+		end
+	end
+	
+end
+
 function ENT:Think()
 	
-	self.Mass = self.EmptyMass + math.floor( (self.BulletData["ProjMass"] + self.BulletData["PropMass"]) * self.Ammo * 2 )
+	local AmmoMass = self:AmmoMass()
+	self.Mass = math.max(self.EmptyMass, self.Entity:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
 	self.Entity:GetPhysicsObject():SetMass(self.Mass) 
 	
 	self:SetNetworkedString("Ammo",self.Ammo)
@@ -162,7 +235,7 @@ function ENT:Think()
 		if self.Damaged < CurTime() then
 			ACF_AmmoExplosion( self.Entity , self.Entity:GetPos() )
 		else
-			if math.Rand(0,150) > self.BulletData["RoundVolume"]^0.5 and math.Rand(0,1) < self.Ammo/self.Capacity and ACF.RoundTypes[self.BulletData["Type"]] then
+			if math.Rand(0,150) > self.BulletData["RoundVolume"]^0.5 and math.Rand(0,1) < self.Ammo/math.max(self.Capacity,1) and ACF.RoundTypes[self.BulletData["Type"]] then
 				self.Entity:EmitSound( "ambient/explosions/explode_4.wav" , 350 , math.max(255 - self.BulletData["PropMass"]*100,60)  )	
 				local MuzzlePos = self.Entity:GetPos()
 				local MuzzleVec = VectorRand()
@@ -224,30 +297,6 @@ function ENT:Touch( Supplier )
 		
 	end
 	
-end
-
-function ENT:IsKilled( Inflictor )
-
-	if self.Exploding or not self.IsExplosive then return end
-	
-	self.Exploding = true
-	if self.Ammo > 1 then
-		ACF_AmmoExplosion( self.Entity , self.Entity:GetPos() )
-	else
-		ACF_HEKill( self.Entity , VectorRand() )
-	end
-	
-end
-
-function ENT:IsDamaged( Damage, Inflictor )
-
-	if self.Exploding or self.Damaged or not self.IsExplosive then return end
-	local Ratio = (Damage/(self.ACF.MaxHealth/3))
-	if ( Ratio + self.Capacity/self.Ammo ) > math.Rand(0,3) then  
-		self.Damaged = CurTime() + (5 - Ratio*3)
-		Wire_TriggerOutput(self.Entity, "On Fire", 1)
-	end
-
 end
 
 function ENT:OnRemove()
