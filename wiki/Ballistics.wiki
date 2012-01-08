@@ -56,9 +56,15 @@ The Serverside ACF_BulletClient creates a ACF_BulletEffect. If the Hit variable 
 
 If the Hit variable transmited to a ACF_BulletEffect is greated than 0 that means this effect is an update, so it updates the existing effect with new data and removes itself
 
-== ACF_ManageBulletEffects ==
+== Bullet Movement ==
 
-Barebones clientside copy of the ACF_CreateBullet serverside function, this uses the ACF.BulletEffect table instead of ACF.Bullet, but uses the same indexes, transmitted over the network.
+=== ACF_ManageBulletEffects ===
+
+Barebones clientside copy of the ACF_CreateBullet serverside function, this uses the ACF.BulletEffect table instead of ACF.Bullet, but uses the same indexes, transmitted over the network. Calls ACF_SimBulletFlight every Think
+
+===ACF_SimBulletFlight===
+
+Does the same calculations as the serverside ACF_CalcBulletFlight, but directly moves the clientside effect in a ballistic path without regard for any obstacles.
 
 
 
