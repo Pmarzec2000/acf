@@ -4,9 +4,11 @@
 
 The ballistic system is used for all the bullet movement in ACF. It uses the ACF.Bullet table to store every BulletData table currently active (ie in flight) and iterates trough it every frame, calculating it's flightpath for a frame, doing a trace along it, and calling the functions defined in the RoundType file if the trace hits something.
 
-The bullets are NOT props, they are simple table entries serverside, and effects clientside, as to minimise the network footprint.
+The bullets are *NOT* props, they are simple table entries serverside, and effects clientside, as to minimise the network footprint.
 
 =Serverside=
+
+Serverside is governed by the sv_ACFBallistics.lua file
 
 == Bullet Creation ==
 
@@ -38,10 +40,25 @@ It supports 3 return values :
 === ACF_BulletClient ===
 
 This is called each time there is a modification to the bullet path. Currently this is only called after an impact. 
-Used to update the clientside prediction model of the bullet.
+Used to update the clientside prediction model of the bullet, the Type var is used to tell the clientside system if this is a bullet creation or a path update, and the Hit var is used to indicate the type of impact, as to call the right effects.
 
+This creates effects as a way of network communication, that way is now deprecated but it used to be the only way to have timely Server>Client communication.
 
+= Clientside =
 
+Clientside is governed by both the cl_ACFBallistics.lua file and the ACF_BulletEffect effect. The ACF_BulletEffect is used as both an effect in itself and a means of communication, and is used to call every clientside function on the Bullet
+
+== Bullet Creation ==
+
+The Serverside ACF_BulletClient creates a ACF_BulletEffect. If the Hit variable is 0, that means it's a new bullet, so the effect gets added to the ACF.BulletEffect table and starts being moved every frame by ACF_ManageBulletEffects
+
+== Bullet Update ==
+
+If the Hit variable transmited to a ACF_BulletEffect is greated than 0 that means this effect is an update, so it updates the existing effect with new data and removes itself
+
+== ACF_ManageBulletEffects ==
+
+Barebones clientside copy of the ACF_CreateBullet serverside function, this uses the ACF.BulletEffect table instead of ACF.Bullet, but uses the same indexes, transmitted over the network.
 
 
 
