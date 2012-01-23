@@ -218,6 +218,33 @@
 }
 
 
+// Radials
+"R7.Small"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_90DB"
+	"wave"				"^ACF_engines/R7_petrolsmall.wav"
+}
+"R7.Medium"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_100DB"
+	"wave"				"^ACF_engines/R7_petrolmedium.wav"
+}
+"R7.Large"
+{
+	"channel"			"CHAN_STATIC"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_120DB"
+	"wave"				"^ACF_engines/R7_petrollarge.wav"
+}
+
+
 
 
 
