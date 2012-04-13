@@ -24,7 +24,7 @@ function ENT:Initialize()
 	self.LBrake = 0
 	self.RBrake = 0
 
-	self.Gear = 0
+	self.Gear = 1
 	self.GearRatio = 0
 	self.ChangeFinished = 0
 	
@@ -83,7 +83,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 		Gearbox.Gear7 = Data7
 		Gearbox.Gear8 = Data8
 		Gearbox.Gear9 = Data9
-		
+				
 	Gearbox:SetModel( Gearbox.Model )	
 		
 	local Inputs = {"Gear","Gear Up","Gear Down"}
@@ -125,6 +125,8 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	
 	Owner:AddCount("_acf_Gearbox", Gearbox)
 	Owner:AddCleanup( "acfmenu", Gearbox )
+	
+	Gearbox:ChangeGear(1)
 	
 	timer.Simple(0.5, function() Gearbox:UpdateHUD() end ) 
 		
@@ -177,7 +179,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.Gear8 = ArgsTable[12]
 	self.Gear9 = ArgsTable[13]
 		
-	self.Gear = 0
+	self:ChangeGear(1)
 	
 	local Inputs = {"Gear","Gear Up","Gear Down"}
 	if self.Dual then
