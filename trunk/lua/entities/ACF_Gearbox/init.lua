@@ -401,7 +401,7 @@ function ENT:ActWheel( Key, OutputEnt, Tq, Brake )
 	local Inertia = OutPhys:GetInertia()
 	local BrakeMult = 0
 	if Brake > 0 then
-		BrakeMult = self.WheelVel[Key] * Inertia * self.LBrake / 10
+		BrakeMult = self.WheelVel[Key] * Inertia * Brake / 10
 	end
 	local TorqueVec = TorqueAxis:Cross(Cross):GetNormalized() 
 	local Force = TorqueVec * Tq + TorqueVec * BrakeMult
