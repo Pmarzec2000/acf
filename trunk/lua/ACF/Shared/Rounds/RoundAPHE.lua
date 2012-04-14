@@ -138,7 +138,7 @@ end
 function ACF_APHENetworkData( Crate, BulletData )
 
 	Crate:SetNetworkedString("AmmoType","APHE")
-	Crate:SetNetworkedInt("AmmoID",BulletData["ID"])
+	Crate:SetNetworkedString("AmmoID",BulletData["Id"])
 	Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])	
 	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
 	Crate:SetNetworkedInt("FillerMass",BulletData["FillerMass"])

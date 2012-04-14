@@ -80,7 +80,7 @@ end
 function ACF_HPNetworkData( Crate, BulletData )
 
 	Crate:SetNetworkedString("AmmoType","HP")
-	Crate:SetNetworkedInt("AmmoID",BulletData["ID"])
+	Crate:SetNetworkedString("AmmoID",BulletData["Id"])
 	
 	Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])	
 	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
