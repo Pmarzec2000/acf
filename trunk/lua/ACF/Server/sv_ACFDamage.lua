@@ -112,7 +112,8 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	
 			end
 			
 			local FragRes = ACF_Damage ( Tar.Entity , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0 )
-			if BlastRes.Kill or FragRes.Kill then
+			
+			if (BlastRes and BlastRes.Kill) or (FragRes and FragRes.Kill) then
 				local Debris = ACF_HEKill( Tar.Entity , Table.Vec , PowerFraction )
 				table.insert( OccFilter , Debris )						--Add the debris created to the ignore so we don't hit it in other rounds
 				LoopKill = true
