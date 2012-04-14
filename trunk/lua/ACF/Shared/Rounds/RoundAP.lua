@@ -115,6 +115,8 @@ end
 --Ammocrate stuff
 function ACF_APNetworkData( Crate, BulletData )
 
+	Crate:SetNetworkedString("AmmoType","AP")
+	Crate:SetNetworkedInt("AmmoID",BulletData["ID"])
 	Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])	
 	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
 	Crate:SetNetworkedInt("PropMass",BulletData["PropMass"])

@@ -183,10 +183,8 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 	self.Volume = math.floor(Size.x * Size.y * Size.z)*Efficiency
 	self.Capacity = math.floor(self.Volume*16.38/self.BulletData["RoundVolume"])
 	
-	self:SetNetworkedString("AmmoID",self.BulletData["Id"])		--Set all the networked variables so the client knows what that crate is shooting.
-	self:SetNetworkedString("AmmoType",self.RoundType)
 	self:SetNetworkedString("Ammo",self.Ammo)
-		
+	
 	self.NetworkData = ACF.RoundTypes[self.RoundType]["network"]
 	self:NetworkData( self.BulletData )
 
