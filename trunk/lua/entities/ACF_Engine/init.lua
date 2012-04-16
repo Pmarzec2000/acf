@@ -255,17 +255,16 @@ function ENT:CalcRPM( EngPhys )
 	self.Torque = self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM/self.PeakMinRPM , (self.LimitRPM - self.FlyRPM)/(self.LimitRPM - self.PeakMaxRPM), 1 ),0 ) --Calculate the current torque from flywheel RPM
 	local Drag = self.PeakTorque*(math.max(self.FlyRPM-self.IdleRPM,0)/self.PeakMaxRPM)*(1-self.Throttle)
 	self.FlyRPM = math.max(self.FlyRPM + self.Torque/self.Inertia - Drag,1)		--Let's accelerate the flywheel based on that torque	
-	
-	local TorqueDiff = math.max(self.FlyRPM - self.IdleRPM,0)*self.Inertia		--This is the presently avaliable torque from the engine
-	
+		
 	local Boxes = table.Count(self.GearLink) --The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
 	local MaxTqTable = {}
 	local MaxTq = 0
 	for Key, Gearbox in pairs(self.GearLink) do 
-		MaxTqTable[Key] = Gearbox:Calc( self.FlyRPM )		--Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
+		MaxTqTable[Key] = Gearbox:Calc( self.FlyRPM, self.Inertia )		--Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
 		MaxTq = MaxTq + MaxTqTable[Key]
 	end
 	
+	local TorqueDiff = math.max(self.FlyRPM - self.IdleRPM,0)*self.Inertia		--This is the presently avaliable torque from the engine
 	local AvailTq = math.min(TorqueDiff/MaxTq/Boxes*self.MassRatio,1)		--Calculate the ratio of total requested torque versus what's avaliable
 		
 	for Key, Gearbox in pairs(self.GearLink) do

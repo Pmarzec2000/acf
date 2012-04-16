@@ -311,7 +311,7 @@ function ENT:CheckEnts()		--Check if every entity we are linked to still actuall
 	
 end
 
-function ENT:Calc( InputRPM )
+function ENT:Calc( InputRPM, InputInertia )
 
 	if self.LastActive == CurTime() then return self.CurRPM end
 	if self.ChangeFinished < CurTime() and self.GearRatio != 0 then
@@ -335,11 +335,11 @@ function ENT:Calc( InputRPM )
 		
 		self.WheelReqTq[Key] = 0
 		if WheelEnt.IsGeartrain then
-			self.WheelReqTq[Key] = WheelEnt:Calc( InputRPM*self.GearRatio )
+			self.WheelReqTq[Key] = WheelEnt:Calc( InputRPM*self.GearRatio, InputInertia/self.GearRatio )
 		else
 			local RPM = self:CalcWheel( Key, WheelEnt, SelfWorld )
 			if RPM < InputRPM then
-				self.WheelReqTq[Key] = Clutch
+				self.WheelReqTq[Key] = math.min(Clutch, (InputRPM - RPM)*InputInertia )
 			end
 		end
 		self.TotalReqTq = self.TotalReqTq + self.WheelReqTq[Key]
