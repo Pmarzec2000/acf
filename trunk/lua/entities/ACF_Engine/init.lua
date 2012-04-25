@@ -265,10 +265,12 @@ function ENT:CalcRPM( EngPhys )
 	end
 	
 	local TorqueDiff = math.max(self.FlyRPM - self.IdleRPM,0)*self.Inertia		--This is the presently avaliable torque from the engine
-	local AvailTq = math.min(TorqueDiff/MaxTq/Boxes*self.MassRatio,1)		--Calculate the ratio of total requested torque versus what's avaliable
+	local AvailTq = math.min(TorqueDiff/MaxTq/Boxes,1)		--Calculate the ratio of total requested torque versus what's avaliable
+	print("TorqueDiff : "..TorqueDiff)
+	print("AvailTq : "..AvailTq)
 		
 	for Key, Gearbox in pairs(self.GearLink) do
-		Gearbox:Act(MaxTqTable[Key]*AvailTq)	--Split the torque fairly between the gearboxes who need it
+		Gearbox:Act(MaxTqTable[Key]*AvailTq*self.MassRatio)	--Split the torque fairly between the gearboxes who need it
 	end
 	
 	self.FlyRPM = self.FlyRPM - (math.min(TorqueDiff,MaxTq)/self.Inertia)
