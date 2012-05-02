@@ -148,13 +148,29 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	if ( List["Mobility"][Id]["model"] != self.Model ) then --Make sure the models are the sames before doing a changeover
 		Feedback = "The new gearbox needs to have the same size and orientation as the old one !"
 	return Feedback end
-	
-	self.Id = Id
-	self.Mass = List["Mobility"][Id]["weight"]
-	self.SwitchTime = List["Mobility"][Id]["switch"]
-	self.MaxTorque = List["Mobility"][Id]["maxtq"]
-	self.Gears = List["Mobility"][Id]["gears"]
-	self.Dual = List["Mobility"][Id]["doubleclutch"]
+		
+	if self.Id != Id then
+		local Inputs = {"Gear","Gear Up","Gear Down"}
+		if self.Dual then
+			table.insert(Inputs,"Left Clutch")
+			table.insert(Inputs,"Right Clutch")
+			table.insert(Inputs,"Left Brake")
+			table.insert(Inputs,"Right Brake")
+		else
+			table.insert(Inputs, "Clutch")
+			table.insert(Inputs, "Brake")
+		end
+		
+		self.Id = Id
+		self.Mass = List["Mobility"][Id]["weight"]
+		self.SwitchTime = List["Mobility"][Id]["switch"]
+		self.MaxTorque = List["Mobility"][Id]["maxtq"]
+		self.Gears = List["Mobility"][Id]["gears"]
+		self.Dual = List["Mobility"][Id]["doubleclutch"]
+		
+		self.Inputs = Wire_CreateInputs( self.Entity, Inputs )
+		
+	end
 	
 	self.GearTable["Final"] = ArgsTable[14]
 	self.GearTable[1] = ArgsTable[5]
@@ -180,20 +196,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.Gear9 = ArgsTable[13]
 		
 	self:ChangeGear(1)
-	
-	local Inputs = {"Gear","Gear Up","Gear Down"}
-	if self.Dual then
-		table.insert(Inputs,"Left Clutch")
-		table.insert(Inputs,"Right Clutch")
-		table.insert(Inputs,"Left Brake")
-		table.insert(Inputs,"Right Brake")
-	else
-		table.insert(Inputs, "Clutch")
-		table.insert(Inputs, "Brake")
-	end
-	
-	self.Inputs = Wire_CreateInputs( self.Entity, Inputs )
-	
+		
 	self:UpdateHUD()
 	
 	return Feedback
@@ -335,7 +338,7 @@ function ENT:Calc( InputRPM, InputInertia )
 		
 		self.WheelReqTq[Key] = 0
 		if WheelEnt.IsGeartrain then
-			self.WheelReqTq[Key] = WheelEnt:Calc( InputRPM*self.GearRatio, InputInertia/self.GearRatio )
+			self.WheelReqTq[Key] = WheelEnt:Calc( InputRPM*self.GearRatio, InputInertia/self.GearRatio )*self.GearRatio
 		else
 			local RPM = self:CalcWheel( Key, WheelEnt, SelfWorld )
 			if RPM < InputRPM then
