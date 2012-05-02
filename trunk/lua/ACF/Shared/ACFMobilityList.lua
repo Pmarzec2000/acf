@@ -44,7 +44,7 @@ local Engine18I4 = {}
 	Engine18I4.flywheelmass = 0.2
 	
 	Engine18I4.idlerpm = 900	--in Rotations Per Minute
-	Engine18I4.peakminrpm = 5400
+	Engine18I4.peakminrpm = 4300
 	Engine18I4.peakmaxrpm = 7000
 	Engine18I4.limitprm = 8000
 	if ( CLIENT ) then
@@ -512,8 +512,8 @@ local Engine180V8 = {}
 	Engine180V8.flywheelmass = 0.9
 	
 	Engine180V8.idlerpm = 600	--in Rotations Per Minute
-	Engine180V8.peakminrpm = 1600
-	Engine180V8.peakmaxrpm = 2600
+	Engine180V8.peakminrpm = 1800
+	Engine180V8.peakmaxrpm = 3000
 	Engine180V8.limitprm = 3000
 	if ( CLIENT ) then
 		Engine180V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
