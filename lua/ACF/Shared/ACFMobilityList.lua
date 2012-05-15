@@ -113,7 +113,7 @@ local Engine16I4 = {}
 	Engine16I4.sound = "I4D.Small"
 	Engine16I4.weight = 150
 	Engine16I4.torque = 150		--in Meter/Kg
-	Engine16I4.flywheelmass = 0.5
+	Engine16I4.flywheelmass = 0.1
 	
 	Engine16I4.idlerpm = 650	--in Rotations Per Minute
 	Engine16I4.peakminrpm = 1000
