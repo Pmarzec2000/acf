@@ -165,7 +165,7 @@ Engines :
 --Added lineup of Radials. No diesel ones, as they're not needed.
 --Improved 9.2 V12's performance.
 
-*21
+*r21
 Guns : 
 --Added proper HitBox support when firing at players and NPCs.
 
@@ -175,3 +175,11 @@ Engines :
 --Fixed some weirdness with the torque distribution
 --Added Gear Up / Gear Down inputs and Current Gear output to the Gearbox
 --You can now update the Engines and Gearboxes with other types as long as they share the same model
+*r22
+Engines :
+--1.2 & 1l engines buffed and changed to 1.5 & 1.6l engines
+--1.8 and 2.0l engines replaced with bigger 3.1 & 3.7l engines
+--Sounds for 16l, 4l v12, 3l diesel, 1.5l & 1.6l changed
+--Added Dual clutch differentials
+--Added 8 speed gearboxes
+--Added 2 speed gearboxes (transfer cases)
