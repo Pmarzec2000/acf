@@ -1,4 +1,4 @@
-AddCSLuaFile( "acf/shared/acfgunlist.lua" )
+AddCSLuaFile( "ACF/Shared/ACFGunList.lua" )
 
 
 -- local Exemple = {}  --That name is just a variable name and doesn't have much meaning
@@ -251,7 +251,73 @@ local RAC30mm = {}
 		RAC30mm.guiupdate = function() return end
 	end
 GunTable["30mmRAC"] = RAC30mm
+--Autoloaders
+
+local AL100mm = {}
+	AL100mm.id = "100mmAL"
+	AL100mm.ent = "acf_gun"
+	AL100mm.type = "Guns"
+	AL100mm.name = "100mm Autoloading Cannon"
+	AL100mm.desc = "Fast firing, high velocity gun, however bulky and heavy"
+	AL100mm.model = "models/tankgun/tankgun_100mm.mdl"
+	AL100mm.caliber = 10.0
+	AL100mm.gunclass = "AL"
+	AL100mm.weight = 5200
+	AL100mm.year = 1956
+		AL100mm.round = {}
+		AL100mm.round.id = "100mmAL"
+		AL100mm.round.maxlength = 71
+		AL100mm.round.propweight = 6.5
+	if ( CLIENT ) then
+		AL100mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		AL100mm.guiupdate = function() return end
+	end
+GunTable["100mmAL"] = AL100mm
+
+local AL120mm = {}
+	AL120mm.id = "120mmAL"
+	AL120mm.ent = "acf_gun"
+	AL120mm.type = "Guns"
+	AL120mm.name = "120mm Autoloading Cannon"
+	AL120mm.desc = "Fast firing, high velocity gun, however bulky and heavy"
+	AL120mm.model = "models/tankgun/tankgun_120mm.mdl"
+	AL120mm.caliber = 12.0
+	AL120mm.gunclass = "AL"
+	AL120mm.weight = 8180
+	AL120mm.year = 1956
+		AL120mm.round = {}
+		AL120mm.round.id = "120mmAL"
+		AL120mm.round.maxlength = 87
+		AL120mm.round.propweight = 11
+	if ( CLIENT ) then
+		AL120mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		AL120mm.guiupdate = function() return end
+	end
+GunTable["120mmAL"] = AL120mm	
+
+local AL75mm = {}
+	AL75mm.id = "75mmAL"
+	AL75mm.ent = "acf_gun"
+	AL75mm.type = "Guns"
+	AL75mm.name = "75mm autoloading Cannon"
+	AL75mm.desc = "Fast firing, high velocity gun, however bulky and heavy"
+	AL75mm.model = "models/tankgun/tankgun_75mm.mdl"
+	AL75mm.caliber = 7.5
+	AL75mm.gunclass = "AL"
+	AL75mm.weight = 2750
+	AL75mm.year = 1946
+		AL75mm.round = {}
+		AL75mm.round.id = "75mmAL"
+		AL75mm.round.maxlength = 59.5
+		AL75mm.round.propweight = 3.4
+	if ( CLIENT ) then
+		AL75mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		AL75mm.guiupdate = function() return end
+	end
+GunTable["75mmAL"] = AL75mm
 	
+
+
 local Gun50mm = {}
 	Gun50mm.id = "50mmC"
 	Gun50mm.ent = "acf_gun"
@@ -568,6 +634,14 @@ local Cannon = {}
 	Cannon.rofmod = 1.5
 	Cannon.sound = "Cannon.Fire"
 GunClass["C"] = Cannon	
+
+local  Autoloader= {}
+	Autoloader.spread = 1.2
+	Autoloader.name = "Autoloader"
+	Autoloader.muzzleflash = "120mm_muzzleflash_noscale"
+	Autoloader.rofmod = 0.9
+	Autoloader.sound = "Cannon.Fire"
+GunClass["AL"] = Autoloader
 	
 local Howitzer = {}
 	Howitzer.spread = 0.5
