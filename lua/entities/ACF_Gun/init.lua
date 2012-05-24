@@ -247,7 +247,7 @@ function ENT:FireShell()
 			end
 			
 			self.Ready = false
-			self.CurrentShot = math.max(self.CurrentShot + 1, self.MagSize)
+			self.CurrentShot = math.min(self.CurrentShot + 1, self.MagSize)
 			if((self.CurrentShot >= self.MagSize) and (self.MagSize > 1)) then
 				self:LoadAmmo(self.MagReload, false)	
 				self:EmitSound("weapons/357/357_reload4.wav",500,100)
