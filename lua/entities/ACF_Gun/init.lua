@@ -25,7 +25,7 @@ function ENT:Initialize()
 	self.Inaccuracy 	= 1
 	
 	self.Inputs = Wire_CreateInputs( self.Entity, { "Fire", "Unload" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "AmmoCount", "Entity" }, { "NORMAL" , "NORMAL" , "ENTITY" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "AmmoCount", "Entity", "Shots Left" }, { "NORMAL" , "NORMAL" , "ENTITY" } )
 	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
 	self.WireDebugName = "ACF Gun"
 
@@ -50,6 +50,23 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	Gun.Model = List["Guns"][Id]["model"]
 	Gun.Mass = List["Guns"][Id]["weight"]
 	Gun.Class = List["Guns"][Id]["gunclass"]
+	-- Custom BS for karbine. Per Gun ROF.
+	Gun.PGRoFmod = 1
+	if(List["Guns"][Id]["rofmod"]) then
+		Gun.PGRoFmod = 1
+	end
+	-- Custom BS for karbine. Magazine Size, Mag reload Time
+	Gun.CurrentShot = 0
+	Gun.MagSize = 1
+	if(List["Guns"][Id]["magsize"]) then
+		Gun.MagSize = math.max(Gun.MagSize, List["Guns"][Id]["magsize"])
+	end
+	Gun.MagReload = 0
+	if(List["Guns"][Id]["magreload"]) then
+		Gun.MagReload = math.max(Gun.MagReload, List["Guns"][Id]["magreload"])
+	end
+	-- self.CurrentShot, self.MagSize, self.MagReload
+	
 	Gun:SetNWString( "Class" , Gun.Class )
 	Gun.Muzzleflash = Classes["GunClass"][Gun.Class]["muzzleflash"]
 	Gun.RoFmod = Classes["GunClass"][Gun.Class]["rofmod"]
@@ -181,6 +198,7 @@ function ENT:Think()
 			end
 		end
 		Wire_TriggerOutput(self.Entity, "AmmoCount", Ammo)
+		Wire_TriggerOutput(self.Entity, "Shots Left", self.MagSize - self.CurrentShot)
 		
 		self.Entity:SetNetworkedBeamString("GunType",self.Entity.Id)
 		self.Entity:SetNetworkedBeamInt("Ammo",Ammo)
@@ -229,10 +247,16 @@ function ENT:FireShell()
 			end
 			
 			self.Ready = false
-			self:LoadAmmo(false, false)	
+			self.CurrentShot = math.max(self.CurrentShot + 1, self.MagSize)
+			if((self.CurrentShot >= self.MagSize) and (self.MagSize > 1)) then
+				self:LoadAmmo(self.MagReload, false)	
+				self:EmitSound("weapons/357/357_reload4.wav",500,100)
+			else
+				self:LoadAmmo(false, false)	
+			end
 			Wire_TriggerOutput(self.Entity, "Ready", 0)
-
 		else
+			self.CurrentShot = 0
 			self.Ready = false
 			Wire_TriggerOutput(self.Entity, "Ready", 0)
 			self:LoadAmmo(false, true)	
@@ -277,7 +301,7 @@ function ENT:LoadAmmo( AddTime, Reload )
 		self.BulletData = AmmoEnt.BulletData
 		self.BulletData["Crate"] = AmmoEnt:EntIndex()
 		
-		self.ReloadTime = ((self.BulletData["RoundVolume"]/500)^0.60)*self.RoFmod
+		self.ReloadTime = ((self.BulletData["RoundVolume"]/500)^0.60)*self.RoFmod*self.PGRoFmod
 		Wire_TriggerOutput(self.Entity, "Loaded", self.BulletData["Type"])
 		
 		self.NextFire = CurTime() + self.ReloadTime

@@ -264,6 +264,11 @@ local AL100mm = {}
 	AL100mm.gunclass = "AL"
 	AL100mm.weight = 5200
 	AL100mm.year = 1956
+	-- new stuff
+	AL100mm.PGRoFmod = 0.8
+	AL100mm.MagSize = 6
+	AL100mm.MagReload = 22
+	--
 		AL100mm.round = {}
 		AL100mm.round.id = "100mmAL"
 		AL100mm.round.maxlength = 71
@@ -285,6 +290,11 @@ local AL120mm = {}
 	AL120mm.gunclass = "AL"
 	AL120mm.weight = 8180
 	AL120mm.year = 1956
+	-- new stuff
+	AL120mm.PGRoFmod = 0.8
+	AL120mm.MagSize = 4
+	AL120mm.MagReload = 26
+	--
 		AL120mm.round = {}
 		AL120mm.round.id = "120mmAL"
 		AL120mm.round.maxlength = 87
@@ -306,6 +316,11 @@ local AL75mm = {}
 	AL75mm.gunclass = "AL"
 	AL75mm.weight = 2750
 	AL75mm.year = 1946
+	-- new stuff
+	AL75mm.PGRoFmod = 0.8
+	AL75mm.MagSize = 8
+	AL75mm.MagReload = 18
+	--
 		AL75mm.round = {}
 		AL75mm.round.id = "75mmAL"
 		AL75mm.round.maxlength = 59.5
