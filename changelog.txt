@@ -175,3 +175,11 @@ Engines :
 --Fixed some weirdness with the torque distribution
 --Added Gear Up / Gear Down inputs and Current Gear output to the Gearbox
 --You can now update the Engines and Gearboxes with other types as long as they share the same model
+*r22
+General :
+
+--New sounds for all the guns except the GL, guns are considerably louder now
+--Added Autoloading cannons, these cannons fire magazines of ammo and then have a lengthy reload time. The new model for this is on the way
+--Autocannons, RACs, and HMGs all now have "magazines", they will fire a burst and then reload
+--Ammo crates will now hold more shells. As a result, your vehicles may be slightly heavier.
+This is in place so vehicles won't be such rolling powderkegs and have more of a chance of a penetration missing the ammunition inside, thus having a longer battle
