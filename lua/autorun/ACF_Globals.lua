@@ -119,7 +119,7 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 	elseif( CVar == "acf_armormod" ) then
 		ACF.ArmorMod = 1 * math.max(New, 0)
 		print ("Armor Mod changed to a factor of " .. New)
-	elseif( CVar == "ACF_ammomod" ) then
+	elseif( CVar == "acf_ammomod" ) then
 		ACF.AmmoMod = 1 * math.max(New, 0.01)
 		print ("Ammo Mod changed to a factor of " .. New)
 	end	
