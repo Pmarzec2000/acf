@@ -281,7 +281,7 @@ local AL100mm = {}
 	AL100mm.type = "Guns"
 	AL100mm.name = "100mm Autoloading Cannon"
 	AL100mm.desc = "Fast firing, high velocity gun, however bulky and heavy"
-	AL100mm.model = "models/tankgun/tankgun_100mm.mdl"
+	AL100mm.model = "models/tankgun/tankgun_al_100mm.mdl"
 	AL100mm.caliber = 10.0
 	AL100mm.gunclass = "AL"
 	AL100mm.weight = 3750
@@ -307,7 +307,7 @@ local AL120mm = {}
 	AL120mm.type = "Guns"
 	AL120mm.name = "120mm Autoloading Cannon"
 	AL120mm.desc = "Fast firing, high velocity gun, however bulky and heavy"
-	AL120mm.model = "models/tankgun/tankgun_120mm.mdl"
+	AL120mm.model = "models/tankgun/tankgun_al_120mm.mdl"
 	AL120mm.caliber = 12.0
 	AL120mm.gunclass = "AL"
 	AL120mm.weight = 6200
@@ -315,7 +315,7 @@ local AL120mm = {}
 	-- new stuff
 	AL120mm.rofmod = 0.8
 	AL120mm.magsize = 4
-	AL120mm.magreload = 26
+	AL120mm.magreload = 30
 	--
 		AL120mm.round = {}
 		AL120mm.round.id = "120mmAL"
@@ -327,21 +327,47 @@ local AL120mm = {}
 	end
 GunTable["120mmAL"] = AL120mm	
 
+local AL140mm = {}
+	AL140mm.id = "140mmAL"
+	AL140mm.ent = "acf_gun"
+	AL140mm.type = "Guns"
+	AL140mm.name = "140mm Autoloading Cannon"
+	AL140mm.desc = "Fast firing, high velocity gun, however bulky and heavy"
+	AL140mm.model = "models/tankgun/tankgun_al_140mm.mdl"
+	AL140mm.caliber = 14.0
+	AL140mm.gunclass = "AL"
+	AL140mm.weight = 9180
+	AL140mm.year = 1970
+	-- new stuff
+	AL140mm.rofmod = 0.8
+	AL140mm.magsize = 4
+	AL140mm.magreload = 45
+	--
+		AL140mm.round = {}
+		AL140mm.round.id = "140mmAL"
+		AL140mm.round.maxlength = 122
+		AL140mm.round.propweight = 23
+	if ( CLIENT ) then
+		AL140mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		AL140mm.guiupdate = function() return end
+	end
+GunTable["140mmAL"] = AL140mm	
+
 local AL75mm = {}
 	AL75mm.id = "75mmAL"
 	AL75mm.ent = "acf_gun"
 	AL75mm.type = "Guns"
-	AL75mm.name = "75mm autoloading Cannon"
+	AL75mm.name = "75mm Autoloading Cannon"
 	AL75mm.desc = "Fast firing, high velocity gun, however bulky and heavy"
-	AL75mm.model = "models/tankgun/tankgun_75mm.mdl"
+	AL75mm.model = "models/tankgun/tankgun_al_75mm.mdl"
 	AL75mm.caliber = 7.5
 	AL75mm.gunclass = "AL"
 	AL75mm.weight = 2420
 	AL75mm.year = 1946
 	-- new stuff
 	AL75mm.rofmod = 0.8
-	AL75mm.magsize = 8
-	AL75mm.magreload = 18
+	AL75mm.magsize = 6
+	AL75mm.magreload = 15
 	--
 		AL75mm.round = {}
 		AL75mm.round.id = "75mmAL"
@@ -353,6 +379,31 @@ local AL75mm = {}
 	end
 GunTable["75mmAL"] = AL75mm
 	
+	local AL50mm = {}
+	AL50mm.id = "50mmAL"
+	AL50mm.ent = "acf_gun"
+	AL50mm.type = "Guns"
+	AL50mm.name = "50mm Autoloading Cannon"
+	AL50mm.desc = "Fast firing, high velocity gun, however bulky and heavy"
+	AL50mm.model = "models/tankgun/tankgun_al_50mm.mdl"
+	AL50mm.caliber = 5.0
+	AL50mm.gunclass = "AL"
+	AL50mm.weight = 1665
+	AL50mm.year = 1966
+	-- new stuff
+	AL50mm.rofmod = 0.8
+	AL50mm.magsize = 8
+	AL50mm.magreload = 10
+	--
+		AL50mm.round = {}
+		AL50mm.round.id = "50mmAL"
+		AL50mm.round.maxlength = 55
+		AL50mm.round.propweight = 1.3
+	if ( CLIENT ) then
+		AL50mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		AL50mm.guiupdate = function() return end
+	end
+GunTable["50mmAL"] = AL50mm
 
 
 local Gun50mm = {}
