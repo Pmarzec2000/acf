@@ -179,7 +179,7 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 	self.BulletData = self:ConvertData( PlayerData )
 		
 	local Size = (self:OBBMaxs() - self:OBBMins())
-	local Efficiency = 0.11			--This is the part of space that's actually useful, the rest is wasted on interround gaps, loading systems ..
+	local Efficiency = 0.11 * ACF.AmmoMod			--This is the part of space that's actually useful, the rest is wasted on interround gaps, loading systems ..
 	self.Volume = math.floor(Size.x * Size.y * Size.z)*Efficiency
 	self.Capacity = math.floor(self.Volume*16.38/self.BulletData["RoundVolume"])
 	
@@ -226,6 +226,13 @@ function ENT:Think()
 	
 	self:SetNetworkedString("Ammo",self.Ammo)
 	self:SetNetworkedVector("TracerColour",self.Entity:GetColor())	
+	
+	local vec = Vector(0,0,server_settings.Int( "sv_gravity", 600 )*-1)
+	if( self.sitp_inspace ) then
+		vec = Vector(0, 0, 0)
+	end
+		
+	self:SetNetworkedVector("Accel", vec)
 		
 	self.Entity:NextThink( CurTime() +  1 )
 	

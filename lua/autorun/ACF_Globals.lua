@@ -10,6 +10,7 @@ ACF.KinFudgeFactor = 2.1	--True kinetic would be 2, over that it's speed biaised
 ACF.KEtoRHA = 0.25		--Empirical conversion from (kinetic energy in KJ)/(Aera in Cm2) to RHA penetration
 ACF.GroundtoRHA = 0.05		--How much mm of steel is a mm of ground worth (Real soil is about 0.15
 ACF.KEtoSpall = 1
+ACF.AmmoMod = 1			-- Ammo modifier. 1 is 1x the amount of ammo
 
 ACF.HEPower = 6000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
@@ -104,3 +105,25 @@ function ACF_Kinetic( Speed , Mass, LimitVel )
 	
 	return Energy
 end
+
+-- New healthmod/armormod/ammomod cvars
+CreateConVar("acf_healthmod", 1)
+CreateConVar("acf_armormod", 1)
+CreateConVar("acf_ammomod", 1)
+
+function ACF_CVarChangeCallback(CVar, Prev, New)
+	if( CVar == "acf_healthmod" ) then
+		ACF.Threshold = 150 / math.max(New, 0.01)
+		print ("Health Mod changed to a factor of " .. New)
+	elseif( CVar == "acf_armormod" ) then
+		ACF.KEtoRHA = 0.25 * math.max(New, 0.01)
+		print ("Armor Mod changed to a factor of " .. New)
+	elseif( CVar == "ACF_ammomod" ) then
+		ACF.AmmoMod = 1 * math.max(New, 0.01)
+		print ("Ammo Mod changed to a factor of " .. New)
+	end	
+end
+
+cvars.AddChangeCallback("acf_healthmod", ACF_CVarChangeCallback)
+cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
+cvars.AddChangeCallback("acf_ammomod", ACF_CVarChangeCallback)

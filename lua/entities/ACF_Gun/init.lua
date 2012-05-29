@@ -223,9 +223,37 @@ function ENT:Think()
 	
 end
 
-function ENT:FireShell()
+function ENT:CheckWeight()
+	local mass = self.Entity:GetPhysicsObject():GetMass()
+	local maxmass = GetConVarNumber("bnk_maxweight") * 1000 + 999
 	
-	if ( self.Ready and self.Entity:GetPhysicsObject():GetMass() >= self.Mass and not self.Entity:GetParent():IsValid() ) then
+	local chk = false
+	
+	local allents = constraint.GetAllConstrainedEntities( self.Entity )
+	for _, ent in pairs(allents) do
+		if (ent and ent:IsValid() and not ent:IsPlayer() and not (ent == self)) then
+			local phys = ent:GetPhysicsObject()
+			if(phys:IsValid()) then
+				mass = mass + phys:GetMass()
+			end
+		end
+	end
+	
+	if( mass < maxmass ) then
+		chk = true
+	end
+	
+	return chk
+end
+
+function ENT:FireShell()
+	if(self.IsUnderWeight == nil) then
+		self.IsUnderWeight = true
+		if(ISBNK) then
+			self.IsUnderWeight = self:CheckWeight()
+		end
+	end
+	if ( self.IsUnderWeight and self.Ready and self.Entity:GetPhysicsObject():GetMass() >= self.Mass and not self.Entity:GetParent():IsValid() ) then
 		if ( ACF.RoundTypes[self.BulletData["Type"]] ) then		--Check if the roundtype loaded actually exists
 		
 			local MuzzlePos = self:LocalToWorld(self.Muzzle)

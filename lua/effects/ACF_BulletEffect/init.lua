@@ -60,7 +60,7 @@ function EFFECT:Init( data )
 		end
 		
 		
-		BulletData.Accel = Vector(0,0,600*-1)
+		BulletData.Accel = BulletData.Crate:GetNetworkedVector( "Accel" ) or Vector(0,0,600*-1)
 		
 		BulletData.LastThink = CurTime()
 		BulletData.Effect = self.Entity
