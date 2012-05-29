@@ -11,6 +11,7 @@ ACF.KEtoRHA = 0.25		--Empirical conversion from (kinetic energy in KJ)/(Aera in 
 ACF.GroundtoRHA = 0.05		--How much mm of steel is a mm of ground worth (Real soil is about 0.15
 ACF.KEtoSpall = 1
 ACF.AmmoMod = 1			-- Ammo modifier. 1 is 1x the amount of ammo
+ACF.ArmorMod = 1
 
 ACF.HEPower = 6000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
@@ -116,7 +117,7 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 		ACF.Threshold = 150 / math.max(New, 0.01)
 		print ("Health Mod changed to a factor of " .. New)
 	elseif( CVar == "acf_armormod" ) then
-		ACF.KEtoRHA = 0.25 * math.max(New, 0.01)
+		ACF.ArmorMod = 1 * math.max(New, 0)
 		print ("Armor Mod changed to a factor of " .. New)
 	elseif( CVar == "ACF_ammomod" ) then
 		ACF.AmmoMod = 1 * math.max(New, 0.01)

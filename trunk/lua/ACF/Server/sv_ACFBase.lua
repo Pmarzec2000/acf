@@ -19,7 +19,7 @@ function ACF_Activate ( Entity , Recalc )
 	Entity.ACF.Health = Health * Percent
 	Entity.ACF.MaxHealth = Health
 	Entity.ACF.Armour = Armour * (0.5 + Percent/2)
-	Entity.ACF.MaxArmour = Armour
+	Entity.ACF.MaxArmour = Armour * ACF.ArmorMod
 	Entity.ACF.Type = nil
 	Entity.ACF.Mass = Entity:GetPhysicsObject():GetMass()
 	Entity.ACF.Density = (Entity:GetPhysicsObject():GetMass()*1000)/Volume
