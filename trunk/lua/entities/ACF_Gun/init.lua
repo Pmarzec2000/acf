@@ -8,6 +8,7 @@ function ENT:Initialize()
 	self.ReloadTime = 1
 	self.Ready = true
 	self.Firing = nil
+	self.Reloading = nil
 	self.NextFire = 0
 	self.LastSend = 0
 	self.Owner = self.Entity
@@ -24,7 +25,7 @@ function ENT:Initialize()
 	
 	self.Inaccuracy 	= 1
 	
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Fire", "Unload" } )
+	self.Inputs = Wire_CreateInputs( self.Entity, { "Fire", "Unload", "Reload" } )
 	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "AmmoCount", "Entity", "Shots Left" }, { "NORMAL" , "NORMAL" , "ENTITY" } )
 	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
 	self.WireDebugName = "ACF Gun"
@@ -183,8 +184,11 @@ function ENT:TriggerInput( iname , value )
 		self.Firing = true
 	elseif ( iname == "Fire" and value <= 0 ) then
 		self.Firing = false
+	elseif ( iname == "Reload" and value > 0 ) then
+		self.Reloading = true
+	elseif ( iname == "Reload" and value <= 0 ) then
+		self.Reloading = false
 	end		
-
 end
 
 function ENT:Think()
@@ -215,6 +219,8 @@ function ENT:Think()
 		Wire_TriggerOutput(self.Entity, "Ready", 1)
 		if self.Firing then
 			self:FireShell()	
+		elseif self.Reloading then
+			self:ReloadMag()
 		end
 	end
 
@@ -244,6 +250,28 @@ function ENT:CheckWeight()
 	end
 	
 	return chk
+end
+
+function ENT:ReloadMag()
+	if(self.IsUnderWeight == nil) then
+		self.IsUnderWeight = true
+		if(ISBNK) then
+			self.IsUnderWeight = self:CheckWeight()
+		end
+	end
+	if ( (self.CurrentShot > 0) and self.IsUnderWeight and self.Ready and self.Entity:GetPhysicsObject():GetMass() >= self.Mass and not self.Entity:GetParent():IsValid() ) then
+		if ( ACF.RoundTypes[self.BulletData["Type"]] ) then		--Check if the roundtype loaded actually exists
+			self:LoadAmmo(self.MagReload, false)	
+			self:EmitSound("weapons/357/357_reload4.wav",500,100)
+			self.CurrentShot = 0
+			Wire_TriggerOutput(self.Entity, "Ready", 0)
+		else
+			self.CurrentShot = 0
+			self.Ready = false
+			Wire_TriggerOutput(self.Entity, "Ready", 0)
+			self:LoadAmmo(false, true)	
+		end
+	end
 end
 
 function ENT:FireShell()
