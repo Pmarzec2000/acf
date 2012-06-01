@@ -12,6 +12,7 @@ ACF.GroundtoRHA = 0.05		--How much mm of steel is a mm of ground worth (Real soi
 ACF.KEtoSpall = 1
 ACF.AmmoMod = 1			-- Ammo modifier. 1 is 1x the amount of ammo
 ACF.ArmorMod = 1
+ACF.Spalling = 0
 
 ACF.HEPower = 6000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
@@ -111,6 +112,7 @@ end
 CreateConVar("acf_healthmod", 1)
 CreateConVar("acf_armormod", 1)
 CreateConVar("acf_ammomod", 1)
+CreateConVar("acf_spalling", 0)
 
 function ACF_CVarChangeCallback(CVar, Prev, New)
 	if( CVar == "acf_healthmod" ) then
@@ -122,6 +124,13 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 	elseif( CVar == "acf_ammomod" ) then
 		ACF.AmmoMod = 1 * math.max(New, 0.01)
 		print ("Ammo Mod changed to a factor of " .. New)
+	elseif( CVar == "acf_spalling" ) then
+		ACF.Spalling = math.floor(math.Clamp(New, 0, 1))
+		local text = "off"
+		if(ACF.Spalling > 0) then
+			text = "on"
+		end
+		print ("ACF Spalling is now " .. text)
 	end	
 end
 
