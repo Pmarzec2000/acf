@@ -216,7 +216,7 @@ function ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone 
 	
 	end
 	
-	local dmul = 1
+	local dmul = 2.5
 	
 	--BNK stuff
 	if (ISBNK) then
