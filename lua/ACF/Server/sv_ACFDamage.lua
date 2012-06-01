@@ -132,6 +132,9 @@ end
 
 function ACF_Spall( HitPos , HitVec , HitMask , KE , Caliber , Armour , Inflictor )
 	
+	if(!ACF.Spalling) then
+		return
+	end
 	local TotalWeight = 3.1416*(Caliber/2)^2 * Armour * 0.00079
 	local Spall = math.max(math.floor(Caliber*ACF.KEtoSpall),2)
 	local SpallWeight = TotalWeight/Spall
