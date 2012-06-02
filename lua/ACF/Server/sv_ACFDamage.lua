@@ -258,6 +258,11 @@ end
 
 function ACF_HEKill( Entity , HitVector , Energy )
 
+	local obj = Entity:GetPhysicsObject()
+	local grav = true
+	if obj:IsValid() then
+		grav = obj:IsGravityEnabled()
+	end
 	constraint.RemoveAll( Entity )
 	Entity:Remove()
 	
@@ -273,6 +278,7 @@ function ACF_HEKill( Entity , HitVector , Energy )
 	local phys = Debris:GetPhysicsObject() 
 	if (phys:IsValid()) then
 		phys:ApplyForceOffset( HitVector:GetNormal() * Energy * 350 , Debris:GetPos()+VectorRand()*20 ) 	
+		phys:EnableGravity( grav )
 	end
 
 	return Debris
