@@ -54,7 +54,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	-- Custom BS for karbine. Per Gun ROF.
 	Gun.PGRoFmod = 1
 	if(List["Guns"][Id]["rofmod"]) then
-		Gun.PGRoFmod = 1
+		Gun.PGRoFmod = math.max(0, List["Guns"][Id]["rofmod"])
 	end
 	-- Custom BS for karbine. Magazine Size, Mag reload Time
 	Gun.CurrentShot = 0
