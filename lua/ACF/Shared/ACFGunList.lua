@@ -289,7 +289,7 @@ local AL100mm = {}
 	-- new stuff
 	AL100mm.rofmod = 0.8
 	AL100mm.magsize = 6
-	AL100mm.magreload = 22
+	AL100mm.magreload = 20
 	--
 		AL100mm.round = {}
 		AL100mm.round.id = "100mmAL"
@@ -725,7 +725,7 @@ local Gatling = {}
 GunClass["RAC"] = Gatling
 	
 local Cannon = {}
-	Cannon.spread = 1.2
+	Cannon.spread = 0.7
 	Cannon.name = "Cannon"
 	Cannon.muzzleflash = "120mm_muzzleflash_noscale"
 	Cannon.rofmod = 1.5
@@ -735,7 +735,7 @@ local Cannon = {}
 GunClass["C"] = Cannon	
 
 local  Autoloader= {}
-	Autoloader.spread = 1.2
+	Autoloader.spread = 0.7
 	Autoloader.name = "Autoloader"
 	Autoloader.muzzleflash = "120mm_muzzleflash_noscale"
 	Autoloader.rofmod = 0.8
