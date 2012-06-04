@@ -202,7 +202,11 @@ function ENT:Think()
 			end
 		end
 		Wire_TriggerOutput(self.Entity, "AmmoCount", Ammo)
-		Wire_TriggerOutput(self.Entity, "Shots Left", self.MagSize - self.CurrentShot)
+		if( self.MagSize ) then
+			Wire_TriggerOutput(self.Entity, "Shots Left", self.MagSize - self.CurrentShot)
+		else
+			Wire_TriggerOutput(self.Entity, "Shots Left", 1)
+		end
 		
 		self.Entity:SetNetworkedBeamString("GunType",self.Entity.Id)
 		self.Entity:SetNetworkedBeamInt("Ammo",Ammo)
