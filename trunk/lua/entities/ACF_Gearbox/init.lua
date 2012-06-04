@@ -329,23 +329,27 @@ function ENT:Calc( InputRPM, InputInertia )
 	self.TotalReqTq = 0
 	
 	for Key, WheelEnt in pairs(self.WheelLink) do
-		local Clutch = 0
-		if self.WheelSide[Key] == 0 then
-			Clutch = self.LClutch
-		elseif self.WheelSide[Key] == 1 then
-			Clutch = self.RClutch
-		end
-		
-		self.WheelReqTq[Key] = 0
-		if WheelEnt.IsGeartrain then
-			self.WheelReqTq[Key] = WheelEnt:Calc( InputRPM*self.GearRatio, InputInertia/self.GearRatio )*self.GearRatio
-		else
-			local RPM = self:CalcWheel( Key, WheelEnt, SelfWorld )
-			if RPM < InputRPM then
-				self.WheelReqTq[Key] = math.min(Clutch, (InputRPM - RPM)*InputInertia )
+		if ( WheelEnt:IsValid() ) then
+			local Clutch = 0
+			if self.WheelSide[Key] == 0 then
+				Clutch = self.LClutch
+			elseif self.WheelSide[Key] == 1 then
+				Clutch = self.RClutch
 			end
+		
+			self.WheelReqTq[Key] = 0
+			if WheelEnt.IsGeartrain then
+				self.WheelReqTq[Key] = WheelEnt:Calc( InputRPM*self.GearRatio, InputInertia/self.GearRatio )*self.GearRatio
+			else
+				local RPM = self:CalcWheel( Key, WheelEnt, SelfWorld )
+				if RPM < InputRPM then
+					self.WheelReqTq[Key] = math.min(Clutch, (InputRPM - RPM)*InputInertia )
+				end
+			end
+			self.TotalReqTq = self.TotalReqTq + self.WheelReqTq[Key]
+		else
+			table.remove(self.WheelLink, Key)
 		end
-		self.TotalReqTq = self.TotalReqTq + self.WheelReqTq[Key]
 	end
 			
 	return math.min(self.TotalReqTq, self.MaxTorque)
@@ -353,14 +357,17 @@ function ENT:Calc( InputRPM, InputInertia )
 end
 
 function ENT:CalcWheel( Key, WheelEnt, SelfWorld )
+	if ( WheelEnt:IsValid() ) then
+		local WheelPhys = WheelEnt:GetPhysicsObject()
+		local VelDiff = (WheelEnt:LocalToWorld(WheelPhys:GetAngleVelocity())-WheelEnt:GetPos()) - SelfWorld
+		local BaseRPM = VelDiff:Dot(WheelEnt:LocalToWorld(self.WheelAxis[Key])-WheelEnt:GetPos())
+		local GearedRPM = BaseRPM / self.GearRatio / -6 --Reported BaseRPM is in angle per second and in the wrong direction, so we convert and add the gearratio
+		self.WheelVel[Key] = BaseRPM
 	
-	local WheelPhys = WheelEnt:GetPhysicsObject()
-	local VelDiff = (WheelEnt:LocalToWorld(WheelPhys:GetAngleVelocity())-WheelEnt:GetPos()) - SelfWorld
-	local BaseRPM = VelDiff:Dot(WheelEnt:LocalToWorld(self.WheelAxis[Key])-WheelEnt:GetPos())
-	local GearedRPM = BaseRPM / self.GearRatio / -6 --Reported BaseRPM is in angle per second and in the wrong direction, so we convert and add the gearratio
-	self.WheelVel[Key] = BaseRPM
-	
-	return GearedRPM
+		return GearedRPM
+	else
+		return 0
+	end
 	
 end
 
