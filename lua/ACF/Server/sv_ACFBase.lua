@@ -97,11 +97,13 @@ function ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 	end
 	--SITP Stuff
 	local var = 1
-	if(!Entity.sitp_spacetype) then
-		Entity.sitp_spacetype = "space"
-	end
-	if(Entity.sitp_spacetype == "homeworld") then
-		var = 0
+	if (ISSITP) then
+		if(!Entity.sitp_spacetype) then
+			Entity.sitp_spacetype = "space"
+		end
+		if(Entity.sitp_spacetype != "space" and Entity.sitp_spacetype != "planet") then
+			var = 0
+		end
 	end
 	
 	HitRes.Damage = var * dmul * (Penetration/Armour)^2 * FrAera	-- This is the volume of the hole caused by our projectile 
