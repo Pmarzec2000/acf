@@ -291,6 +291,9 @@ function ENT:FireShell()
 		if(self.sitp_spacetype != "space" and self.sitp_spacetype != "planet") then
 			bool = false
 		end
+		if(self.sitp_core == false) then
+			bool = false
+		end
 	end
 	if ( bool and self.IsUnderWeight and self.Ready and self.Entity:GetPhysicsObject():GetMass() >= self.Mass and not self.Entity:GetParent():IsValid() ) then
 		if ( ACF.RoundTypes[self.BulletData["Type"]] ) then		--Check if the roundtype loaded actually exists
