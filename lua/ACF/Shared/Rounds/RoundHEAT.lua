@@ -193,7 +193,7 @@ end
 
 function ACF_HEATDetonate( Index, Bullet, HitPos, HitNormal )
 
-	ACF_HE( HitPos , HitNormal , Bullet["FillerMass"]/2 , Bullet["CasingMass"] , Bullet["Owner"] )
+	ACF_HE( HitPos - Bullet["Flight"] * 0.015 , HitNormal , Bullet["FillerMass"]/2 , Bullet["CasingMass"] , Bullet["Owner"] )
 
 	Bullet["Detonated"] = true
 	Bullet["Pos"] = HitPos

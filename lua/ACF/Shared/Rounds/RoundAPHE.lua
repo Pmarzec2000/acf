@@ -117,7 +117,6 @@ function ACF_APHEPropImpact( Index, Bullet, Target, HitNormal, HitPos , Bone ) 	
 end
 
 function ACF_APHEWorldImpact( Index, Bullet, HitPos, HitNormal )
-		
 	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
 		return "Penetrated"
@@ -129,7 +128,7 @@ end
 
 function ACF_APHEEndFlight( Index, Bullet, HitPos, HitNormal )
 	
-	ACF_HE( HitPos , HitNormal , Bullet["FillerMass"] , Bullet["ProjMass"] - Bullet["FillerMass"] , Bullet["Owner"] )
+	ACF_HE( HitPos - Bullet["Flight"] * 0.015 , HitNormal , Bullet["FillerMass"] , Bullet["ProjMass"] - Bullet["FillerMass"] , Bullet["Owner"] )
 	ACF_RemoveBullet( Index )
 	
 end
