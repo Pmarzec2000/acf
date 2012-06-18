@@ -56,6 +56,9 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 	if self.Exploding or not self.IsExplosive then return HitRes end
 	if HitRes.Kill then
 		self.Exploding = true
+		if( Inflictor and Inflictor:IsValid() and Inflictor:IsPlayer() ) then
+			self.Inflictor = Inflictor
+		end
 		if self.Ammo > 1 then
 			ACF_AmmoExplosion( self.Entity , self.Entity:GetPos() )
 		else

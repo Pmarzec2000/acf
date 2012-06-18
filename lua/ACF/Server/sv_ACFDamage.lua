@@ -326,6 +326,12 @@ function ACF_AmmoExplosion( Origin , Pos )
 	local Radius = (HEWeight)^0.33*8*39.37				--Scalling law found on the net, based on 1PSI overpressure from 1 kg of TNT at 15m
 	local Search = true
 	local Filter = {Origin}
+	
+	local Inflictor = nil
+	if( Origin.Inflictor ) then
+		Inflictor = Origin.Inflictor
+	end
+	
 	Origin.IsExplosive = false
 	Origin.Exploding = true
 	Origin:Remove()
@@ -379,7 +385,7 @@ function ACF_AmmoExplosion( Origin , Pos )
 		
 	end	
 	
-	ACF_HE( Pos , Vector(0,0,1) , HEWeight , HEWeight*0.5 , Origin , Origin )
+	ACF_HE( Pos , Vector(0,0,1) , HEWeight , HEWeight*0.5 , Inflictor , Origin )
 	
 	local Flash = EffectData()
 		Flash:SetOrigin( Pos )
