@@ -26,7 +26,7 @@ function ENT:Initialize()
 	self.Inaccuracy 	= 1
 	
 	self.Inputs = Wire_CreateInputs( self.Entity, { "Fire", "Unload", "Reload" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "AmmoCount", "Entity", "Shots Left" }, { "NORMAL" , "NORMAL" , "ENTITY" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "AmmoCount", "Entity", "Shots Left" }, { "NORMAL" , "NORMAL" , "ENTITY", "NORMAL" } )
 	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
 	self.WireDebugName = "ACF Gun"
 
