@@ -90,13 +90,42 @@ function PANEL:Init( )
 	local Mobility = self.WeaponSelect:AddNode( "Mobility" )
 	local Engines = Mobility:AddNode( "Engines" )
 	local Gearboxes = Mobility:AddNode( "Gearboxes" )
+	local EngineSubcats = {}
+	for _, MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
+		NodeAdd = Mobility
+		if( MobilityTable.ent == "acf_engine" ) then
+			NodeAdd = Engines
+		elseif ( MobilityTable.ent == "acf_gearbox" ) then
+			NodeAdd = Gearboxes
+		end
+		if((EngineSubcats["misce"] == nil) and (EngineSubcats["miscg"] == nil)) then
+			EngineSubcats["misce"] = Engines:AddNode( "Miscellaneous" )
+			EngineSubcats["miscg"] = Gearboxes:AddNode( "Miscellaneous" )
+		end
+		if(MobilityTable.category) then
+			if(!EngineSubcats[MobilityTable.category]) then
+				EngineSubcats[MobilityTable.category] = NodeAdd:AddNode( MobilityTable.category )
+			end
+		end
+	end
+	
 	for MobilityID,MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		
 		local NodeAdd = Mobility
 		if MobilityTable.ent == "acf_engine" then
 			NodeAdd = Engines
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			else
+				NodeAdd = EngineSubcats["misce"]
+			end
 		elseif MobilityTable.ent == "acf_gearbox" then
 			NodeAdd = Gearboxes
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			else
+				NodeAdd = EngineSubcats["miscg"]
+			end
 		end
 		
 		local EndNode = NodeAdd:AddNode( MobilityTable.name or "No Name" )
@@ -111,7 +140,20 @@ function PANEL:Init( )
 	
 	
 
-	
+	local Missiles = self.WeaponSelect:AddNode( "Missiles" )
+	for MisID, MisTable in pairs(self.WeaponDisplay["Missiles"]) do
+
+		local EndNode = Missiles:AddNode( MisTable.name or "No Name" )
+    
+		EndNode.mytable = MisTable
+		function EndNode:DoClick()
+			RunConsoleCommand( "acfmenu_type", self.mytable.type )
+			acfmenupanel:UpdateDisplay( self.mytable )
+		end
+    
+		EndNode.Icon:SetImage( "gui/silkicons/newspaper")
+    
+	end
 	-- local Sensors = self.WeaponSelect:AddNode( "Sensors" )
 	-- for SensorsID,SensorsTable in pairs(self.WeaponDisplay["Sensors"]) do
 		

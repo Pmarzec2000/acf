@@ -68,6 +68,7 @@ include("ACF/Shared/Rounds/RoundFunctions.lua")
 include("ACF/Shared/ACFGunList.lua")
 include("ACF/Shared/ACFMobilityList.lua")
 include("ACF/Shared/ACFSensorList.lua")
+include("ACF/Shared/ACFMissileList.lua")
 
 ACF.Weapons = list.Get("ACFEnts")
 	
