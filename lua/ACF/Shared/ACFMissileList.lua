@@ -15,6 +15,7 @@ local RackSingle = {}
     RackSingle.shots = 1
     RackSingle.weight = 500
     RackSingle.maxweight = 500
+	RackSingle.armored = false
     if ( CLIENT ) then
         RackSingle.guicreate = (function( Panel, Table ) ACFRackGUICreate ( Table ) end or nil)
         RackSingle.guiupdate = function() return end
@@ -31,6 +32,7 @@ local RackDouble = {}
     RackDouble.shots = 2
     RackDouble.weight = 500
     RackDouble.maxweight = 300
+	RackDouble.armored = false
     if ( CLIENT ) then
         RackDouble.guicreate = (function( Panel, Table ) ACFRackGUICreate ( Table ) end or nil)
         RackDouble.guiupdate = function() return end
@@ -47,6 +49,7 @@ local RackQuad = {}
     RackQuad.shots = 4
     RackQuad.weight = 500
     RackQuad.maxweight = 150
+	RackQuad.armored = false
     if ( CLIENT ) then
         RackQuad.guicreate = (function( Panel, Table ) ACFRackGUICreate ( Table ) end or nil)
         RackQuad.guiupdate = function() return end
@@ -63,6 +66,7 @@ local Minipod = {}
     Minipod.shots = 16
     Minipod.weight = 500
     Minipod.maxweight = 30
+	Minipod.armored = true
     if ( CLIENT ) then
         Minipod.guicreate = (function( Panel, Table ) ACFRackGUICreate ( Table ) end or nil)
         Minipod.guiupdate = function() return end
