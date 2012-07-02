@@ -89,7 +89,7 @@
 	"volume"			"1.0"
 	"pitch"				"PITCH_NORM"
 	"soundlevel"			"SNDLVL_90DB"
-	"wave"				"^ACF_engines/i4_petrolsmalldist.wav"
+	"wave"				"^ACF_engines/i4_petrolsmall2.wav"
 }
 "I4P.Medium"
 {
@@ -97,7 +97,7 @@
 	"volume"			"1.0"
 	"pitch"				"PITCH_NORM"
 	"soundlevel"			"SNDLVL_100DB"
-	"wave"				"^ACF_engines/i4_petrolmediumdist.wav"
+	"wave"				"^ACF_engines/i4_petrolmedium2.wav"
 }
 "I4P.Large"
 {
