@@ -40,12 +40,12 @@ local EngineGTMedium = {}
 	EngineGTMedium.sound = "GT.Large"
 	EngineGTMedium.category = "Turbine"
 	EngineGTMedium.weight = 400
-	EngineGTMedium.torque = 450	
+	EngineGTMedium.torque = 600	
     EngineGTMedium.flywheelmass = 1		--in Meter/Kg
 	EngineGTMedium.idlerpm = 1000	--in Rotations Per Minute
-	EngineGTMedium.peakminrpm = 2500
-	EngineGTMedium.peakmaxrpm = 5000
-	EngineGTMedium.limitprm = 5000
+	EngineGTMedium.peakminrpm = 2000
+	EngineGTMedium.peakmaxrpm = 4000
+	EngineGTMedium.limitprm = 4000
 	
 	if ( CLIENT ) then
 		EngineGTMedium.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
@@ -63,12 +63,12 @@ local EngineGTLarge = {}
 	EngineGTLarge.sound = "GT.Large"
 	EngineGTLarge.category = "Turbine"
 	EngineGTLarge.weight = 1000
-	EngineGTLarge.torque = 1100	
+	EngineGTLarge.torque = 1700	
     EngineGTLarge.flywheelmass = 3.5		--in Meter/Kg
-	EngineGTLarge.idlerpm = 1000	--in Rotations Per Minute
-	EngineGTLarge.peakminrpm = 2500
-	EngineGTLarge.peakmaxrpm = 5000
-	EngineGTLarge.limitprm = 5000
+	EngineGTLarge.idlerpm = 800	--in Rotations Per Minute
+	EngineGTLarge.peakminrpm = 2000
+	EngineGTLarge.peakmaxrpm = 4000
+	EngineGTLarge.limitprm = 4000
 	
 	if ( CLIENT ) then
 		EngineGTLarge.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
@@ -76,73 +76,7 @@ local EngineGTLarge = {}
 	end
 MobilityTable["Turbine-Large"] = EngineGTLarge
 
-local EngineGTsmall2 = {}
-	EngineGTsmall2.id = "Turbine-Small2"
-	EngineGTsmall2.ent = "acf_engine"
-	EngineGTsmall2.type = "Mobility"
-	EngineGTsmall2.name = "Gas Turbine, Aircraft, Small"
-	EngineGTsmall2.desc = "A small gas turbine, low power but a very wide powerband\n\nOutput rpm is low due to reduction gearing\n\nTurbines are powerful but suffer from poor throttle response."
-	EngineGTsmall2.model = "models/engines/turbine_s.mdl"
-	EngineGTsmall2.sound = "GT.Small"
-	EngineGTsmall2.category = "Turbine"
-	EngineGTsmall2.weight = 150
-	EngineGTsmall2.torque = 200	
-    EngineGTsmall2.flywheelmass = 0.2		--in Meter/Kg
-	EngineGTsmall2.idlerpm = 1000	--in Rotations Per Minute
-	EngineGTsmall2.peakminrpm = 2500
-	EngineGTsmall2.peakmaxrpm = 5000
-	EngineGTsmall2.limitprm = 5000
-	if ( CLIENT ) then
-		EngineGTsmall2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
-		EngineGTsmall2.guiupdate = function() return end
-	end
-MobilityTable["Turbine-Small2"] = EngineGTsmall2
 
-local EngineGTMedium2 = {}
-	EngineGTMedium2.id = "Turbine-Medium2"
-	EngineGTMedium2.ent = "acf_engine"
-	EngineGTMedium2.type = "Mobility"
-	EngineGTMedium2.name = "Gas Turbine, Aircraft, Medium"
-	EngineGTMedium2.desc = "A medium gas turbine, moderate power but a very wide powerband\n\nOutput rpm is low due to reduction gearing\n\nTurbines are powerful but suffer from poor throttle response."
-	EngineGTMedium2.model = "models/engines/turbine_m.mdl"
-	EngineGTMedium2.sound = "GT.Large"
-	EngineGTMedium2.category = "Turbine"
-	EngineGTMedium2.weight = 400
-	EngineGTMedium2.torque = 450	
-    EngineGTMedium2.flywheelmass = 1		--in Meter/Kg
-	EngineGTMedium2.idlerpm = 1000	--in Rotations Per Minute
-	EngineGTMedium2.peakminrpm = 2500
-	EngineGTMedium2.peakmaxrpm = 5000
-	EngineGTMedium2.limitprm = 5000
-	
-	if ( CLIENT ) then
-		EngineGTMedium2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
-		EngineGTMedium2.guiupdate = function() return end
-	end
-MobilityTable["Turbine-Medium2"] = EngineGTMedium2
-
-local EngineGTLarge2 = {}
-	EngineGTLarge2.id = "Turbine-Large2"
-	EngineGTLarge2.ent = "acf_engine"
-	EngineGTLarge2.type = "Mobility"
-	EngineGTLarge2.name = "Gas Turbine, Aircraft, Large"
-	EngineGTLarge2.desc = "A large gas turbine, powerful with a wide powerband\n\nOutput rpm is low due to reduction gearing\n\nTurbines are powerful but suffer from poor throttle response."
-	EngineGTLarge2.model = "models/engines/turbine_l.mdl"
-	EngineGTLarge2.sound = "GT.Large"
-	EngineGTLarge2.category = "Turbine"
-	EngineGTLarge2.weight = 1000
-	EngineGTLarge2.torque = 1100	
-    EngineGTLarge2.flywheelmass = 3.5		--in Meter/Kg
-	EngineGTLarge2.idlerpm = 1000	--in Rotations Per Minute
-	EngineGTLarge2.peakminrpm = 2500
-	EngineGTLarge2.peakmaxrpm = 5000
-	EngineGTLarge2.limitprm = 5000
-	
-	if ( CLIENT ) then
-		EngineGTLarge2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
-		EngineGTLarge2.guiupdate = function() return end
-	end
-MobilityTable["Turbine-Large2"] = EngineGTLarge2
 
 
 
