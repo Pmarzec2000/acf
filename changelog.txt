@@ -183,3 +183,8 @@ General :
 --Autocannons, RACs, and HMGs all now have "magazines", they will fire a burst and then reload
 --Ammo crates will now hold more shells. As a result, your vehicles may be slightly heavier.
 This is in place so vehicles won't be such rolling powderkegs and have more of a chance of a penetration missing the ammunition inside, thus having a longer battle
+
+*r23
+
+Engines :
+--Added V-Twin & Single cylinder engines, models courtesy of Gamerpaddy
