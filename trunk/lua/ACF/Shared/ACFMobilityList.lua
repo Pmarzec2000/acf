@@ -79,6 +79,147 @@ MobilityTable["Turbine-Large"] = EngineGTLarge
 
 
 
+--Single cylinders
+local Engine2I1 = {}
+	Engine2I1.id = "0.25-I1"
+	Engine2I1.ent = "acf_engine"
+	Engine2I1.type = "Mobility"
+	Engine2I1.name = "250cc Single"
+	Engine2I1.desc = "Tiny bike engine"
+	Engine2I1.model = "models/engines/1cyls.mdl"
+	Engine2I1.sound = "acf_engines/i1_small.wav"
+	Engine2I1.category = "Single"
+	Engine2I1.weight = 15
+	Engine2I1.torque = 20		--in Meter/Kg
+	Engine2I1.flywheelmass = 0.005	
+
+	Engine2I1.idlerpm = 1200	--in Rotations Per Minute
+	Engine2I1.peakminrpm = 4000
+	Engine2I1.peakmaxrpm = 6500
+	Engine2I1.limitprm = 7500
+	if ( CLIENT ) then
+		Engine2I1.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine2I1.guiupdate = function() return end
+	end
+MobilityTable["0.25-I1"] = Engine2I1
+
+local Engine5I1 = {}
+	Engine5I1.id = "0.5-I1"
+	Engine5I1.ent = "acf_engine"
+	Engine5I1.type = "Mobility"
+	Engine5I1.name = "500cc Single"
+	Engine5I1.desc = "Large single cylinder bike engine"
+	Engine5I1.model = "models/engines/1cylm.mdl"
+	Engine5I1.sound = "acf_engines/i1_medium.wav"
+	Engine5I1.category = "Single"
+	Engine5I1.weight = 30
+	Engine5I1.torque = 40		--in Meter/Kg
+	Engine5I1.flywheelmass = 0.005	
+
+	Engine5I1.idlerpm = 900	--in Rotations Per Minute
+	Engine5I1.peakminrpm = 4300
+	Engine5I1.peakmaxrpm = 7000
+	Engine5I1.limitprm = 8000
+	if ( CLIENT ) then
+		Engine5I1.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine5I1.guiupdate = function() return end
+	end
+MobilityTable["0.5-I1"] = Engine5I1
+
+local Engine13I1 = {}
+	Engine13I1.id = "1.3-I1"
+	Engine13I1.ent = "acf_engine"
+	Engine13I1.type = "Mobility"
+	Engine13I1.name = "1300cc Single"
+	Engine13I1.desc = "Ridiculously large single cylinder engine, seriously what the fuck"
+	Engine13I1.model = "models/engines/1cylb.mdl"
+	Engine13I1.sound = "acf_engines/i1_large.wav"
+	Engine13I1.category = "Single"
+	Engine13I1.weight = 55
+	Engine13I1.torque = 90		--in Meter/Kg
+	Engine13I1.flywheelmass = 0.1	
+
+	Engine13I1.idlerpm = 600	--in Rotations Per Minute
+	Engine13I1.peakminrpm = 3600
+	Engine13I1.peakmaxrpm = 6000
+	Engine13I1.limitprm = 6700
+	if ( CLIENT ) then
+		Engine13I1.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine13I1.guiupdate = function() return end
+	end
+MobilityTable["1.3-I1"] = Engine13I1
+
+--Vtwins
+local Engine6V2 = {}
+	Engine6V2.id = "0.6-V2"
+	Engine6V2.ent = "acf_engine"
+	Engine6V2.type = "Mobility"
+	Engine6V2.name = "600cc V-Twin"
+	Engine6V2.desc = "Twin cylinder bike engine, torquey for its size"
+	Engine6V2.model = "models/engines/v-twins.mdl"
+	Engine6V2.sound = "acf_engines/vtwin_small.wav"
+	Engine6V2.category = "V-Twin"
+	Engine6V2.weight = 40
+	Engine6V2.torque = 50		--in Meter/Kg
+	Engine6V2.flywheelmass = 0.01	
+
+	Engine6V2.idlerpm = 900	--in Rotations Per Minute
+	Engine6V2.peakminrpm = 4000
+	Engine6V2.peakmaxrpm = 6500
+	Engine6V2.limitprm = 7500
+	if ( CLIENT ) then
+		Engine6V2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine6V2.guiupdate = function() return end
+	end
+MobilityTable["0.6-V2"] = Engine6V2
+
+local Engine12V2 = {}
+	Engine12V2.id = "1.2-V2"
+	Engine12V2.ent = "acf_engine"
+	Engine12V2.type = "Mobility"
+	Engine12V2.name = "1200cc V-Twin"
+	Engine12V2.desc = "Large displacement vtwin engine"
+	Engine12V2.model = "models/engines/v-twinm.mdl"
+	Engine12V2.sound = "acf_engines/vtwin_medium.wav"
+	Engine12V2.category = "V-Twin"
+	Engine12V2.weight = 60
+	Engine12V2.torque = 85		--in Meter/Kg
+	Engine12V2.flywheelmass = 0.02	
+
+	Engine12V2.idlerpm = 725	--in Rotations Per Minute
+	Engine12V2.peakminrpm = 3300
+	Engine12V2.peakmaxrpm = 5500
+	Engine12V2.limitprm = 6250
+	if ( CLIENT ) then
+		Engine12V2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine12V2.guiupdate = function() return end
+	end
+MobilityTable["1.2-V2"] = Engine12V2
+
+local Engine24V2 = {}
+	Engine24V2.id = "2.4-V2"
+	Engine24V2.ent = "acf_engine"
+	Engine24V2.type = "Mobility"
+	Engine24V2.name = "2400cc V-Twin"
+	Engine24V2.desc = "Huge fucking Vtwin 'MURRICA FUCK YEAH"
+	Engine24V2.model = "models/engines/v-twinb.mdl"
+	Engine24V2.sound = "acf_engines/vtwin_large.wav"
+	Engine24V2.category = "V-Twin"
+	Engine24V2.weight = 120
+	Engine24V2.torque = 160		--in Meter/Kg
+	Engine24V2.flywheelmass = 0.1	
+
+	Engine24V2.idlerpm = 900	--in Rotations Per Minute
+	Engine24V2.peakminrpm = 3300
+	Engine24V2.peakmaxrpm = 5500
+	Engine24V2.limitprm = 6000
+	if ( CLIENT ) then
+		Engine24V2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine24V2.guiupdate = function() return end
+	end
+MobilityTable["2.4-V2"] = Engine24V2
+
+
 
 
 -- Petrol I4s
