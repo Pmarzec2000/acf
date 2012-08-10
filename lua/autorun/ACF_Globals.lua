@@ -1,6 +1,7 @@
 ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
+ACF.Version = 285 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 print("ACF Loaded")
 
 ACF.Threshold = 150	--Health Divisor
@@ -134,6 +135,28 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 		print ("ACF Spalling is now " .. text)
 	end	
 end
+
+
+function GetOnlineVersion( printChecking )
+	
+	print("Checking for updates....")
+	
+	http.Get("http://acf.googlecode.com/svn/","",function(contents,size)
+		local rev = tonumber(string.match( contents, "Revision ([0-9]+)" ))
+		if rev and ACF.Version >= rev then
+			print("ACF Is Up To Date, Latest Version: "..rev)
+		elseif !rev then
+			print("No Internet Connection Detected! ACF Update Check Failed")
+		else
+			print("A newer version of ACF is available! Version: "..rev..", You have Version: "..ACF.Version)
+			print("Please update!")
+		end
+		ACF.CurrentVersion = rev
+		
+	
+	end)
+end
+GetOnlineVersion()
 
 cvars.AddChangeCallback("acf_healthmod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
