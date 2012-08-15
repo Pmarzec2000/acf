@@ -1,0 +1,9 @@
+"AddonInfo"
+{
+	"name"		"Offroad Wheels"
+	"version"	"1.0"
+	"up_date"	""
+	"author_name"	"shadowscion / unrezt"
+	"author_email"	""
+	"info"		"12 different wheels in 6 different diameters in 2 different widths"
+}
