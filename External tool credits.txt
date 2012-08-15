@@ -1,0 +1,11 @@
+These external tools are not made by the ACF dev team and are hereby credited:
+
+Buoyancy tool is by RabidToaster
+
+Fading door tool is originally by Conna, modified by various goons
+
+Fallen's tools are by TGiFallen
+
+Makespherical is by Falcqn
+
+Steering wheels are by Penis Colada (that guy who made the Gavrils in Rigs of Rods.)

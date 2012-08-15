@@ -1,0 +1,8 @@
+"AddonInfo"
+{
+	"name"		"Fallen's Build Tools"
+	"version"	"1"
+	"author_name"	"TGiFallen"
+	"info"		"A Pack of tools htat aid in building"
+	"override"	"0"
+}
