@@ -1,20 +1,24 @@
+INSTALL:
 
-The trunk folder is the main ACF folder. Install it to your (or the server's) addons folder. Install it and rename the folder ACF.
+Make a folder in your server (or your client) Addons folder named ACF. As you used an svn program thus far to download this readme, i'm sure you can figure out how to install the main acf folder.
 
-Take the scripts & particles folder from the ACF folder and place them in the main garry's mod directory. THIS IS IMPORTANT. ENGINES AND GUNS WILL NOT HAVE SOUND IF YOU DO NOT DO THIS FOR CLIENT -AND- SERVER
+After doing that, take the following folders and place them in the addons folder (they shouldn't be in the main ACF folder)
 
-Place the external ACF tools in the Addons folder where the ACF folder is.
+ACF Buoyancy tool
+ACF Fading door
+ACF Fallen's Tools
+ACF MakeSpherical
+ACF Offroadwheels
+ACF steering wheels
 
+Note: MakeSpherical is updated in this version. You may have it already but this is an updated version.
 
-----------------------------------
-DO NOT INSTALL THE BRANCHES FOLDER!
-----------------------------------
+After you've installed those folders, take the following folders and put them in the MAIN GMOD DIRECTORY:
 
+Scripts
+Particles
 
-
-
-
-
+ACF WILL NOT HAVE SOUND IF YOU DO NOT INSTALL THOSE FOLDERS INTO THE MAIN GMOD DIRECTORY!
 
 
 These external tools are not made by the ACF dev team and are hereby credited:
@@ -28,3 +32,5 @@ Fallen's tools are by TGiFallen
 Makespherical is by Falcqn
 
 Steering wheels are by Penis Colada (that guy who made the Gavrils in Rigs of Rods.)
+
+Offroadtires are by Shadowscion
