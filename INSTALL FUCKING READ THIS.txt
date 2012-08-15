@@ -1,0 +1,30 @@
+
+The trunk folder is the main ACF folder. Install it to your (or the server's) addons folder. Install it and rename the folder ACF.
+
+Take the scripts & particles folder from the ACF folder and place them in the main garry's mod directory. THIS IS IMPORTANT. ENGINES AND GUNS WILL NOT HAVE SOUND IF YOU DO NOT DO THIS FOR CLIENT -AND- SERVER
+
+Place the external ACF tools in the Addons folder where the ACF folder is.
+
+
+----------------------------------
+DO NOT INSTALL THE BRANCHES FOLDER!
+----------------------------------
+
+
+
+
+
+
+
+
+These external tools are not made by the ACF dev team and are hereby credited:
+
+Buoyancy tool is by RabidToaster
+
+Fading door tool is originally by Conna, modified by various goons
+
+Fallen's tools are by TGiFallen
+
+Makespherical is by Falcqn
+
+Steering wheels are by Penis Colada (that guy who made the Gavrils in Rigs of Rods.)
