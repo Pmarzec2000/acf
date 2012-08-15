@@ -18,7 +18,13 @@ After you've installed those folders, take the following folders and put them in
 Scripts
 Particles
 
-ACF WILL NOT HAVE SOUND IF YOU DO NOT INSTALL THOSE FOLDERS INTO THE MAIN GMOD DIRECTORY!
+ACF WILL NOT HAVE SOUND IF YOU DO NOT INSTALL THOSE FOLDERS INTO THE MAIN GMOD DIRECTORY FOR CLIENT -AND- SERVER!
+
+
+
+SERVER OWNERS: If you have the tools included with acf already, please delete the duplicates and/or don't install the corresponding acf folders
+
+
 
 
 These external tools are not made by the ACF dev team and are hereby credited:
