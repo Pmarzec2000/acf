@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "shadowscion/RubberTex"
+	"$model" "1"
+	"$bumpmap" "shadowscion/OffroadNormal"
+	"$surfaceprop" "jeeptire"
+	"$phong"     "1"
+	"$halflambert"	1
+ 	"$phongexponent"   "150"
+ 	"$phongboost"   "2"
+ 	"$phongfresnelranges"   "[.5 .8 1]"
+}
+
