@@ -1,8 +1,0 @@
-"AddonInfo"
-{
-	"name"			"Conna's Tools Pack"
-	"version"		"1.6"
-	"author_name"	"Conna"
-	"author_url"	"http://conna.gmservers.net"
-	"info"			"Conna's Tools Pack"
-}
