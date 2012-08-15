@@ -1,0 +1,9 @@
+"AddonInfo"
+{
+	"name"		"Wheels pack"
+	"version"	"1.0"
+	"up_date"	""
+	"author_name"	"jojobull"
+	"author_email"	"jojobull.gmodeur@gmail.com"
+	"info"		"12 wheels for create your car, bike, truck... in gmod !!!"
+}
