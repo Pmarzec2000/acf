@@ -1,7 +1,7 @@
 ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
-ACF.Version = 287 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 291 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 print("ACF Loaded")
 
 ACF.Threshold = 150	--Health Divisor
