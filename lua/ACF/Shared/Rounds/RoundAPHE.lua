@@ -26,6 +26,7 @@ local DefTable = {}
 list.Set( "ACFRoundTypes", "APHE", DefTable )  --Set the round properties
 list.Set( "ACFIdRounds", DefTable.netid , "APHE" ) --Index must equal the ID entry in the table above, Data must equal the index of the table above
 
+ACF.AmmoBlacklist["APHE"] = { "MO", "MG" }
 
 AddCSLuaFile( "ACF/Shared/Rounds/RoundHE.lua" )
 
@@ -205,7 +206,7 @@ end
 --GUI stuff after this
 function ACF_APHEGUICreate( Panel, Table )
 
-	acfmenupanel:AmmoSelect()
+	acfmenupanel:AmmoSelect( ACF.AmmoBlacklist["APHE"] )
 
 	acfmenupanel:CPanelText("Desc", "")	--Description (Name, Desc)
 	acfmenupanel:CPanelText("LengthDisplay", "")	--Total round length (Name, Desc)

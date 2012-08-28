@@ -285,9 +285,10 @@ function ACFChangelogHTTPCallBack(contents , size)
 end
 http.Get("http://acf.googlecode.com/svn/trunk/changelog.txt", "", ACFChangelogHTTPCallBack) 
 
-function PANEL:AmmoSelect()
+function PANEL:AmmoSelect( Blacklist )
 	
 	if not acfmenupanel.CustomDisplay then return end
+	if not Blacklist then Blacklist = {} end
 	
 	if not acfmenupanel.AmmoData then
 		acfmenupanel.AmmoData = {}
@@ -313,7 +314,9 @@ function PANEL:AmmoSelect()
 	acfmenupanel.CData.CaliberSelect = vgui.Create( "DMultiChoice", acfmenupanel.CustomDisplay )	
 		acfmenupanel.CData.CaliberSelect:SetSize(100, 30)
 		for Key, Value in pairs( acfmenupanel.WeaponDisplay["Guns"] ) do
-			acfmenupanel.CData.CaliberSelect:AddChoice( Value.id , Key )
+			if( !table.HasValue( Blacklist, Value.gunclass ) ) then
+				acfmenupanel.CData.CaliberSelect:AddChoice( Value.id , Key )
+			end
 		end
 		acfmenupanel.CData.CaliberSelect.OnSelect = function( index , value , data )
 			acfmenupanel.AmmoData["Data"] = acfmenupanel.WeaponData["Guns"][data]["round"]

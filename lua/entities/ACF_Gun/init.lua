@@ -296,7 +296,13 @@ function ENT:FireShell()
 		end
 	end
 	if ( bool and self.IsUnderWeight and self.Ready and self.Entity:GetPhysicsObject():GetMass() >= self.Mass and not self.Entity:GetParent():IsValid() ) then
-		if ( ACF.RoundTypes[self.BulletData["Type"]] ) then		--Check if the roundtype loaded actually exists
+		Blacklist = {}
+		if not ACF.AmmoBlacklist[self.BulletData["Type"]] then
+			Blacklist = {}
+		else
+			Blacklist = ACF.AmmoBlacklist[self.BulletData["Type"]]	
+		end
+		if ( ACF.RoundTypes[self.BulletData["Type"]] and !table.HasValue( Blacklist, self.Class ) ) then		--Check if the roundtype loaded actually exists
 		
 			local MuzzlePos = self:LocalToWorld(self.Muzzle)
 			local MuzzleVec = self:GetForward()
