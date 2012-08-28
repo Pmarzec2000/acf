@@ -26,6 +26,8 @@ local DefTable = {}
 list.Set( "ACFRoundTypes", "HEAT", DefTable )  --Set the round properties
 list.Set( "ACFIdRounds", DefTable.netid , "HEAT" ) --Index must equal the ID entry in the table above, Data must equal the index of the table above
 
+ACF.AmmoBlacklist["HEAT"] = { "MG", "HMG", "RAC", "AC" }
+
 function ACF_HEATConvert( Crate, PlayerData )		--Function to convert the player's slider data into the complete round data
 	
 	local Data = {}
@@ -304,7 +306,7 @@ end
 --GUI stuff after this
 function ACF_HEATGUICreate( Panel, Table )
 
-	acfmenupanel:AmmoSelect()
+	acfmenupanel:AmmoSelect( ACF.AmmoBlacklist["HEAT"] )
 	
 	acfmenupanel:CPanelText("Desc", "")	--Description (Name, Desc)
 	acfmenupanel:CPanelText("LengthDisplay", "")	--Total round length (Name, Desc)

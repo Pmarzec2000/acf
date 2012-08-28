@@ -1,6 +1,7 @@
 ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
+ACF.AmmoBlacklist = {}
 ACF.Version = 307 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 print("ACF Loaded")
 
@@ -161,3 +162,4 @@ GetOnlineVersion()
 cvars.AddChangeCallback("acf_healthmod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_ammomod", ACF_CVarChangeCallback)
+cvars.AddChangeCallback("acf_spalling", ACF_CVarChangeCallback)
