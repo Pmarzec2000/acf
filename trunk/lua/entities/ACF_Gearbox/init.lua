@@ -371,7 +371,7 @@ function ENT:CalcWheel( Key, WheelEnt, SelfWorld )
 	
 end
 
-function ENT:Act( Torque )
+function ENT:Act( Torque, DeltaTime )
 	
 	local ReactTq = 0
 	local AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))		--Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
@@ -384,9 +384,9 @@ function ENT:Act( Torque )
 		end
 		
 		if OutputEnt.IsGeartrain then
-			OutputEnt:Act( self.WheelReqTq[Key]*AvailTq )
+			OutputEnt:Act( self.WheelReqTq[Key]*AvailTq , DeltaTime )
 		else
-			self:ActWheel( Key, OutputEnt, self.WheelReqTq[Key]*AvailTq, Brake )
+			self:ActWheel( Key, OutputEnt, self.WheelReqTq[Key]*AvailTq, Brake , DeltaTime )
 			ReactTq = ReactTq + self.WheelReqTq[Key]*AvailTq
 		end
 	end
@@ -394,15 +394,15 @@ function ENT:Act( Torque )
 	local BoxPhys = self:GetPhysicsObject()
 	if BoxPhys:IsValid() and ReactTq != 0 then	
 		local Force = self:GetForward() * ReactTq - self:GetForward() * BrakeMult
-		BoxPhys:ApplyForceOffset( Force * 0.5, self:GetPos() + self:GetUp()*-40 )
-		BoxPhys:ApplyForceOffset( Force * -0.5, self:GetPos() + self:GetUp()*40 )
+		BoxPhys:ApplyForceOffset( Force * 39.37 * DeltaTime, self:GetPos() + self:GetUp()*-39.37 )
+		BoxPhys:ApplyForceOffset( Force * -39.37 * DeltaTime, self:GetPos() + self:GetUp()*39.37 )
 	end
 	
 	self.LastActive = CurTime()
 	
 end
 
-function ENT:ActWheel( Key, OutputEnt, Tq, Brake )
+function ENT:ActWheel( Key, OutputEnt, Tq, Brake , DeltaTime )
 
 	local OutPhys = OutputEnt:GetPhysicsObject()
 	local OutPos = OutputEnt:GetPos()
@@ -415,8 +415,8 @@ function ENT:ActWheel( Key, OutputEnt, Tq, Brake )
 	end
 	local TorqueVec = TorqueAxis:Cross(Cross):GetNormalized() 
 	local Force = TorqueVec * Tq + TorqueVec * BrakeMult
-	OutPhys:ApplyForceOffset( Force * -0.5, OutPos + Cross*40 )
-	OutPhys:ApplyForceOffset( Force * 0.5, OutPos + Cross*-40 )
+	OutPhys:ApplyForceOffset( Force * -39.37 * DeltaTime, OutPos + Cross*39.37)
+	OutPhys:ApplyForceOffset( Force * 39.37 * DeltaTime, OutPos + Cross*-39.37 )
 	
 end
 
