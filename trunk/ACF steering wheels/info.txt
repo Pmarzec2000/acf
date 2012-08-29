@@ -1,7 +1,0 @@
-"AddonInfo"
-{
-	"name"		"Steering Wheel Pack"
-	"version"	"1"
-	"author_name"	"Penis Colada"
-	"author_email"	"gabester666@hotmail.com"
-}
