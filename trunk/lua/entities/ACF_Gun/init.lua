@@ -191,6 +191,13 @@ function ENT:TriggerInput( iname , value )
 	end		
 end
 
+function RetDist( enta, entb )
+	if not ((enta and enta:IsValid()) or (entb and entb:IsValid())) then return 0 end
+	disp = enta:GetPos() - entb:GetPos()
+	dist = math.sqrt( disp.x * disp.x + disp.y * disp.y + disp.z * disp.z )
+	return dist
+end
+
 function ENT:Think()
 
 	local Time = CurTime()
@@ -198,7 +205,13 @@ function ENT:Think()
 		local Ammo = 0
 		for Key,AmmoEnt in pairs(self.AmmoLink) do
 			if AmmoEnt and AmmoEnt:IsValid() and AmmoEnt["Load"] then
-				Ammo = Ammo + (AmmoEnt.Ammo or 0)
+				if RetDist( self, AmmoEnt ) < 512 then
+					Ammo = Ammo + (AmmoEnt.Ammo or 0)
+				else
+					self:Unlink( AmmoEnt )
+					soundstr =  "physics/metal/metal_box_impact_bullet" .. tostring(math.random(1, 3)) .. ".wav"
+					self:EmitSound(soundstr,500,100)
+				end
 			end
 		end
 		Wire_TriggerOutput(self.Entity, "AmmoCount", Ammo)
