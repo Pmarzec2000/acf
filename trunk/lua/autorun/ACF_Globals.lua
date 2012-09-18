@@ -2,7 +2,8 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 313 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 315 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.CurrentVersion = 0 -- just defining a variable, do not change
 print("ACF Loaded")
 
 ACF.Threshold = 150	--Health Divisor
@@ -139,7 +140,7 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 end
 
 
-function GetOnlineVersion( printChecking )
+function ACF_UpdateChecking( )
 	
 	print("Checking for updates....")
 	
@@ -147,18 +148,34 @@ function GetOnlineVersion( printChecking )
 		local rev = tonumber(string.match( contents, "Revision ([0-9]+)" ))
 		if rev and ACF.Version >= rev then
 			print("ACF Is Up To Date, Latest Version: "..rev)
+			
 		elseif !rev then
 			print("No Internet Connection Detected! ACF Update Check Failed")
 		else
 			print("A newer version of ACF is available! Version: "..rev..", You have Version: "..ACF.Version)
+			
 			print("Please update!")
 		end
 		ACF.CurrentVersion = rev
 		
-	
 	end)
 end
-GetOnlineVersion()
+ACF_UpdateChecking( )
+
+
+
+function ACF_ChatVersionPrint(ply)
+	if ACF.Version < ACF.CurrentVersion then
+	timer.Simple( 2,function()
+		ply:SendLua(
+			"chat.AddText(Color(255,0,0),\"A newer version of ACF is available! Version: \"..ACF.CurrentVersion)"
+			) 
+		end)
+	end	
+end
+
+hook.Add("PlayerInitialSpawn","versioncheck",ACF_ChatVersionPrint)
+
 
 cvars.AddChangeCallback("acf_healthmod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
