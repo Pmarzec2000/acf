@@ -237,6 +237,34 @@ end
 function ACFHomeGUICreate( Table )
 
 	if not acfmenupanel.CustomDisplay then return end
+	--start version
+	
+	acfmenupanel["CData"]["VersionInit"] = vgui.Create( "DLabel" )
+	versiontext = "Version\n\n".."SVN Version: "..ACF.CurrentVersion.."\nCurrent Version: "..ACF.Version
+	acfmenupanel["CData"]["VersionInit"]:SetText(versiontext)	
+	acfmenupanel["CData"]["VersionInit"]:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["VersionInit"] )
+	
+	
+	acfmenupanel["CData"]["VersionText"] = vgui.Create( "DLabel" )
+	
+	local color
+	local versionstring
+	if ACF.Version >= ACF.CurrentVersion then
+		versionstring = "Up To Date"
+		color = Color(0,255,0,255)
+	else
+		versionstring = "Out Of Date"
+		color = Color(255,0,0,255)
+
+	end
+	
+	acfmenupanel["CData"]["VersionText"]:SetText("ACF Is "..versionstring.."!\n\n\n\n")
+	acfmenupanel["CData"]["VersionText"]:SetColor(color) 
+	acfmenupanel["CData"]["VersionText"]:SizeToContents() 
+	
+	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["VersionText"] )
+	-- end version
 	
 	acfmenupanel:CPanelText("Header", "Changelog")
 	
@@ -253,6 +281,7 @@ function ACFHomeGUICreate( Table )
 		
 	end	
 	acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
+	
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
 	
 	acfmenupanel.CustomDisplay:PerformLayout()
