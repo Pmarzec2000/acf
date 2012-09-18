@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 307 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 313 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 print("ACF Loaded")
 
 ACF.Threshold = 150	--Health Divisor
@@ -39,38 +39,39 @@ CreateConVar('sbox_max_acf_gun', 12)
 CreateConVar('sbox_max_acf_ammo', 32)
 CreateConVar('sbox_max_acf_misc', 32)
 
-AddCSLuaFile( "ACF_Globals.lua" )
-AddCSLuaFile( "ACF/Client/cl_ACFBallistics.lua" )
-AddCSLuaFile( "ACF/Client/cl_ACFMenu_GUI.lua" )
+AddCSLuaFile( "acf_globals.lua" )
+AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
+AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 
-AddCSLuaFile( "ACF/Client/cl_ACFBallistics.lua" )
-AddCSLuaFile( "ACF/Client/cl_ACFMenu_GUI.lua" )
+AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
+AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 
 if (SERVER) then
 
-	include("ACF/Server/sv_ACFBase.lua")
-	include("ACF/Server/sv_ACFDamage.lua")
-	include("ACF/Server/sv_ACFBallistics.lua")
+	include("acf/server/sv_acfbase.lua")
+	include("acf/server/sv_acfdamage.lua")
+	include("acf/server/sv_acfballistics.lua")
 	
 elseif (CLIENT) then
 
-	include("ACF/Client/cl_ACFBallistics.lua")
+	include("acf/client/cl_acfballistics.lua")
 	--include("ACF/Client/cl_ACFMenu_GUI.lua")
 	
 end
 
-include("ACF/Shared/Rounds/RoundAP.lua")
-include("ACF/Shared/Rounds/RoundAPHE.lua")
-include("ACF/Shared/Rounds/RoundHE.lua")
-include("ACF/Shared/Rounds/RoundHEAT.lua")
-include("ACF/Shared/Rounds/RoundHP.lua")
-include("ACF/Shared/Rounds/RoundRefill.lua")
-include("ACF/Shared/Rounds/RoundFunctions.lua")
+include("acf/shared/rounds/roundap.lua")
+include("acf/shared/rounds/roundaphe.lua")
+include("acf/shared/rounds/roundhe.lua")
+include("acf/shared/rounds/roundheat.lua")
+include("acf/shared/rounds/roundhp.lua")
+include("acf/shared/rounds/roundsmoke.lua")
+include("acf/shared/rounds/roundrefill.lua")
+include("acf/shared/rounds/roundfunctions.lua")
 
-include("ACF/Shared/ACFGunList.lua")
-include("ACF/Shared/ACFMobilityList.lua")
-include("ACF/Shared/ACFSensorList.lua")
-include("ACF/Shared/ACFMissileList.lua")
+include("acf/shared/acfgunlist.lua")
+include("acf/shared/acfmobilitylist.lua")
+include("acf/shared/acfsensorlist.lua")
+include("acf/shared/acfmissilelist.lua")
 
 ACF.Weapons = list.Get("ACFEnts")
 	

@@ -417,6 +417,7 @@ local Gun50mm = {}
 	Gun50mm.gunclass = "C"
 	Gun50mm.weight = 665
 	Gun50mm.year = 1935
+	Gun50mm.sound = "weapons/ACF_Gun/ac_fire4.wav"
 		Gun50mm.round = {}
 		Gun50mm.round.id = "50mmC"
 		Gun50mm.round.maxlength = 55
@@ -678,6 +679,29 @@ local MO200mm = {}
 		MO200mm.guiupdate = function() return end
 	end
 GunTable["200mmM"] = MO200mm
+
+local SL40mm = {}
+	SL40mm.id = "40mmSL"
+	SL40mm.ent = "acf_gun"
+	SL40mm.type = "Guns"
+	SL40mm.name = "40mm Smoke Launcher"
+	SL40mm.desc = "Smoke launcher to block an attacker's line of sight"
+	SL40mm.model = "models/launcher/40mmgl.mdl"
+	SL40mm.caliber = 4.0
+	SL40mm.gunclass = "SL"
+	SL40mm.weight = 55
+	SL40mm.year = 1941
+	SL40mm.round = {}
+	SL40mm.round.id = "40mmSL"
+	SL40mm.round.maxlength = 15
+	SL40mm.round.propweight = 0.00005 
+		
+
+	if ( CLIENT ) then
+		SL40mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		SL40mm.guiupdate = function() return end
+	end
+GunTable["40mmSL"] = SL40mm
 	
 list.Set( "ACFEnts", "Guns", GunTable )
 
@@ -773,6 +797,16 @@ local GLauncher = {}
 	GLauncher.soundDistance = " "
 	GLauncher.soundNormal = " "
 GunClass["GL"] = GLauncher	
+
+local SmokeLauncher = {}
+	SmokeLauncher.spread = 2
+	SmokeLauncher.name = "Smoke Launcher"
+	SmokeLauncher.muzzleflash = "40mm_muzzleflash_noscale"
+	SmokeLauncher.rofmod =  5 --60
+	SmokeLauncher.sound = "weapons/ACF_Gun/mortar_new.wav"
+	SmokeLauncher.soundDistance = "Mortar.Fire"
+	SmokeLauncher.soundNormal = " "
+GunClass["SL"] = SmokeLauncher	
 
 list.Set( "ACFClasses", "GunClass", GunClass )	--End gun classes listing
 
