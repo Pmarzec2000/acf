@@ -193,3 +193,8 @@ Engines :
 --ACF update checker by General Wrex
 --Added a various assortment of common tools used with acf in attempt to keep all acf servers equal in terms of building and make it easier to use them (since most of them are on their own SVNs)
 --SERVER OWNERS: Please remove the duplicate tools of the ones included in ACF if you already have them
+*r25
+
+--Added ammunition blacklisting. MGs cannot fire HEAT and such.
+--Added ammo disconnection after the weapon is 512 units away from its ammunition.
+--Added prototype smoke launcher. Fires low velocity ground impact smoke shells to blind the enemy's line of sight. Reloads in 30 sec. The Smoke ammo can ONLY be used with the 40mm SL.
