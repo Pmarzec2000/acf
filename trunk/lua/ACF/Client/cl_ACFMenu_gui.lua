@@ -1,10 +1,13 @@
+
 function PANEL:Init( )
 
 	acfmenupanel = self.Panel
-		
+	
 	// height
+	
+	
 	self:SetTall( surface.ScreenHeight() - 120 )
-
+	
 	//Weapon Select	
 	
 	self.WeaponSelect = vgui.Create( "DTree", self )
@@ -228,7 +231,7 @@ function PANEL:PerformLayout()
 	if acfmenupanel.CustomDisplay then
 		--Custom panel
 		acfmenupanel.CustomDisplay:SetPos( 0, ypos )
-		acfmenupanel.CustomDisplay:SetSize( acfmenupanel:GetWide(), acfmenupanel:GetTall() )
+		acfmenupanel.CustomDisplay:SetSize( acfmenupanel:GetWide(), acfmenupanel:GetTall() - acfmenupanel.WeaponSelect:GetTall() - 10 )
 		ypos = acfmenupanel.CustomDisplay.Y + acfmenupanel.CustomDisplay:GetTall() + vspacing
 	end
 	

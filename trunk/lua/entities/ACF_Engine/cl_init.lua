@@ -27,7 +27,7 @@ function ENT:GetOverlayText()
 	local MinRPM = self.Entity:GetNetworkedBeamInt("MinRPM")
 	local MaxRPM = self.Entity:GetNetworkedBeamInt("MaxRPM")
 	local LimitRPM = self.Entity:GetNetworkedBeamInt("LimitRPM")
-	local txt = Type.."\nMax Power : "..Power.."KW\nMax Torque : "..Torque.."N/m\nPowerband : "..MinRPM.." - "..MaxRPM.."RPM\nRedline : "..LimitRPM.."RPM" or ""
+	local txt = Type.."\nMax Power : "..Power.."KW / "..math.Round(Power*1.34).."HP \nMax Torque : "..Torque.."N/m / "..math.Round(Torque*0.73).."ft-lb \nPowerband : "..MinRPM.." - "..MaxRPM.."RPM\nRedline : "..LimitRPM.."RPM" or ""
 	if (not SinglePlayer()) then
 		local PlayerName = self:GetPlayerName()
 		txt = txt .. "\n(" .. PlayerName .. ")"
@@ -55,8 +55,8 @@ function ACFEngineGUICreate( Table )
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 		
 	acfmenupanel:CPanelText("Desc", Table.desc)
-	acfmenupanel:CPanelText("Power", "Peak Power : "..(math.floor(Table.torque * Table.peakmaxrpm / 9548.8)).." kW @ "..(Table.peakmaxrpm).." RPM")
-	acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque).." n/m")
+	acfmenupanel:CPanelText("Power", "Peak Power : "..(math.floor(Table.torque * Table.peakmaxrpm / 9548.8)).." kW / "..math.Round(math.floor(Table.torque * Table.peakmaxrpm / 9548.8)*1.34).." HP @ "..(Table.peakmaxrpm).." RPM")
+	acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque).." n/m  / "..math.Round(Table.torque*0.73).." ft-lb")
 	acfmenupanel:CPanelText("RPM", "Idle : "..(Table.idlerpm).." RPM\nIdeal RPM Range : "..(Table.peakminrpm).."-"..(Table.peakmaxrpm).." RPM\nRedline : "..(Table.limitprm).." RPM")
 	acfmenupanel:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
 	

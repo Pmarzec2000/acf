@@ -198,3 +198,9 @@ Engines :
 --Added ammunition blacklisting. MGs cannot fire HEAT and such.
 --Added ammo disconnection after the weapon is 512 units away from its ammunition.
 --Added prototype smoke launcher. Fires low velocity ground impact smoke shells to blind the enemy's line of sight. Reloads in 30 sec. The Smoke ammo can ONLY be used with the 40mm SL.
+
+*r26
+--Fixed ammo menus, they have a scrollbar so those with less than X768 can see ammo info.
+--Added Imperial outputs to engines (hp/lb ft)
+--Admiral Wrex made both these awesome changes!
+
