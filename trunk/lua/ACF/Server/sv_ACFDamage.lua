@@ -261,7 +261,7 @@ function ACF_HEKill( Entity , HitVector , Energy )
 	local obj = Entity:GetPhysicsObject()
 	local grav = true
 	local mass = nil
-	if obj:IsValid() then
+	if obj:IsValid() and ISSITP then
 		grav = obj:IsGravityEnabled()
 		mass = obj:GetMass()
 	end
