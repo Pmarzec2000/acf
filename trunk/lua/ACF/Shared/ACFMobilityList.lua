@@ -77,7 +77,7 @@ local EngineGTMedium = {}
 	EngineGTMedium.sound = "ACF_engines/turbine_medium.wav"
 	EngineGTMedium.category = "Turbine"
 	EngineGTMedium.weight = 400
-	EngineGTMedium.torque = 800	
+	EngineGTMedium.torque = 600	
     EngineGTMedium.flywheelmass = 2		--in Meter/Kg
 	EngineGTMedium.idlerpm = 2000	--in Rotations Per Minute
 	EngineGTMedium.peakminrpm = 1
@@ -104,7 +104,7 @@ local EngineGTLarge = {}
 	EngineGTLarge.sound = "ACF_engines/turbine_large.wav"
 	EngineGTLarge.category = "Turbine"
 	EngineGTLarge.weight = 1000
-	EngineGTLarge.torque = 2000	
+	EngineGTLarge.torque = 1500	
     EngineGTLarge.flywheelmass = 4		--in Meter/Kg
 	EngineGTLarge.idlerpm = 2000	--in Rotations Per Minute
 	EngineGTLarge.peakminrpm = 1
@@ -1234,7 +1234,7 @@ local Gear1TS = {}
 	Gear1TS.geartable = {}
 		Gear1TS.geartable[-1] = 0.5
 		Gear1TS.geartable[0] = 0
-		Gear1TS.geartable[1] = 0.1
+		Gear1TS.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1TS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1TS.guiupdate = function() return end
@@ -1258,7 +1258,7 @@ local Gear1TM = {}
 	Gear1TM.geartable = {}
 		Gear1TM.geartable[-1] = 0.5
 		Gear1TM.geartable[0] = 0
-		Gear1TM.geartable[1] = 0.1
+		Gear1TM.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1TM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1TM.guiupdate = function() return end
@@ -1282,7 +1282,7 @@ local Gear1TL = {}
 	Gear1TL.geartable = {}
 		Gear1TL.geartable[-1] = 1
 		Gear1TL.geartable[0] = 0
-		Gear1TL.geartable[1] = 0.1
+		Gear1TL.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1TL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1TL.guiupdate = function() return end
@@ -1308,7 +1308,7 @@ local Gear1LS = {}
 	Gear1LS.geartable = {}
 		Gear1LS.geartable[-1] = 0.5
 		Gear1LS.geartable[0] = 0
-		Gear1LS.geartable[1] = 0.1
+		Gear1LS.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LS.guiupdate = function() return end
@@ -1332,7 +1332,7 @@ local Gear1LM = {}
 	Gear1LM.geartable = {}
 		Gear1LM.geartable[-1] = 0.5
 		Gear1LM.geartable[0] = 0
-		Gear1LM.geartable[1] = 0.1
+		Gear1LM.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LM.guiupdate = function() return end
@@ -1356,7 +1356,7 @@ local Gear1LL = {}
 	Gear1LL.geartable = {}
 		Gear1LL.geartable[-1] = 1
 		Gear1LL.geartable[0] = 0
-		Gear1LL.geartable[1] = 0.1
+		Gear1LL.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LL.guiupdate = function() return end
@@ -1383,7 +1383,7 @@ local Gear1TDS = {}
 	Gear1TDS.geartable = {}
 		Gear1TDS.geartable[-1] = 0.5
 		Gear1TDS.geartable[0] = 0
-		Gear1TDS.geartable[1] = 0.1
+		Gear1TDS.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1TDS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1TDS.guiupdate = function() return end
@@ -1407,7 +1407,7 @@ local Gear1TDM = {}
 	Gear1TDM.geartable = {}
 		Gear1TDM.geartable[-1] = 0.5
 		Gear1TDM.geartable[0] = 0
-		Gear1TDM.geartable[1] = 0.1
+		Gear1TDM.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1TDM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1TDM.guiupdate = function() return end
@@ -1431,7 +1431,7 @@ local Gear1TDL = {}
 	Gear1TDL.geartable = {}
 		Gear1TDL.geartable[-1] = 1
 		Gear1TDL.geartable[0] = 0
-		Gear1TDL.geartable[1] = 0.1
+		Gear1TDL.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1TDL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1TDL.guiupdate = function() return end
@@ -1457,7 +1457,7 @@ local Gear1LDS = {}
 	Gear1LDS.geartable = {}
 		Gear1LDS.geartable[-1] = 0.5
 		Gear1LDS.geartable[0] = 0
-		Gear1LDS.geartable[1] = 0.1
+		Gear1LDS.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LDS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LDS.guiupdate = function() return end
@@ -1481,7 +1481,7 @@ local Gear1LDM = {}
 	Gear1LDM.geartable = {}
 		Gear1LDM.geartable[-1] = 0.5
 		Gear1LDM.geartable[0] = 0
-		Gear1LDM.geartable[1] = 0.1
+		Gear1LDM.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LDM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LDM.guiupdate = function() return end
@@ -1505,7 +1505,7 @@ local Gear1LDL = {}
 	Gear1LDL.geartable = {}
 		Gear1LDL.geartable[-1] = 1
 		Gear1LDL.geartable[0] = 0
-		Gear1LDL.geartable[1] = 0.1
+		Gear1LDL.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LDL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LDL.guiupdate = function() return end
@@ -1532,8 +1532,8 @@ local Gear2TS = {}
 	Gear2TS.geartable = {}
 		Gear2TS.geartable[-1] = 0.5
 		Gear2TS.geartable[0] = 0
-		Gear2TS.geartable[1] = 0.1
-		Gear2TS.geartable[2] = -0.1
+		Gear2TS.geartable[1] = 0.5
+		Gear2TS.geartable[2] = -0.5
 	if ( CLIENT ) then
 		Gear2TS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear2TS.guiupdate = function() return end
@@ -1557,8 +1557,8 @@ local Gear2TM = {}
 	Gear2TM.geartable = {}
 		Gear2TM.geartable[-1] = 0.5
 		Gear2TM.geartable[0] = 0
-		Gear2TM.geartable[1] = 0.1
-		Gear2TM.geartable[2] = -0.1
+		Gear2TM.geartable[1] = 0.5
+		Gear2TM.geartable[2] = -0.5
 	if ( CLIENT ) then
 		Gear2TM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear2TM.guiupdate = function() return end
@@ -1582,8 +1582,8 @@ local Gear2TL = {}
 	Gear2TL.geartable = {}
 		Gear2TL.geartable[-1] = 1
 		Gear2TL.geartable[0] = 0
-		Gear2TL.geartable[1] = 0.1
-		Gear2TL.geartable[2] = -0.1
+		Gear2TL.geartable[1] = 0.5
+		Gear2TL.geartable[2] = -0.5
 	if ( CLIENT ) then
 		Gear2TL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear2TL.guiupdate = function() return end
@@ -1607,8 +1607,8 @@ local Gear2LS = {}
 	Gear2LS.geartable = {}
 		Gear2LS.geartable[-1] = 0.5
 		Gear2LS.geartable[0] = 0
-		Gear2LS.geartable[1] = 0.1
-		Gear2LS.geartable[2] = -0.1
+		Gear2LS.geartable[1] = 0.5
+		Gear2LS.geartable[2] = -0.5
 	if ( CLIENT ) then
 		Gear2LS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear2LS.guiupdate = function() return end
@@ -1632,8 +1632,8 @@ local Gear2LM = {}
 	Gear2LM.geartable = {}
 		Gear2LM.geartable[-1] = 0.5
 		Gear2LM.geartable[0] = 0
-		Gear2LM.geartable[1] = 0.1
-		Gear2LM.geartable[2] = -0.1
+		Gear2LM.geartable[1] = 0.5
+		Gear2LM.geartable[2] = -0.5
 	if ( CLIENT ) then
 		Gear2LM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear2LM.guiupdate = function() return end
@@ -1657,8 +1657,8 @@ local Gear2LL = {}
 	Gear2LL.geartable = {}
 		Gear2LL.geartable[-1] = 1
 		Gear2LL.geartable[0] = 0
-		Gear2LL.geartable[1] = 0.1
-		Gear2LL.geartable[2] = -0.1
+		Gear2LL.geartable[1] = 0.5
+		Gear2LL.geartable[2] = -0.5
 	if ( CLIENT ) then
 		Gear2LL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear2LL.guiupdate = function() return end
@@ -1684,7 +1684,7 @@ local Gear1LS = {}
 	Gear1LS.geartable = {}
 		Gear1LS.geartable[-1] = 0.5
 		Gear1LS.geartable[0] = 0
-		Gear1LS.geartable[1] = 0.1
+		Gear1LS.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LS.guiupdate = function() return end
@@ -1708,7 +1708,7 @@ local Gear1LM = {}
 	Gear1LM.geartable = {}
 		Gear1LM.geartable[-1] = 0.5
 		Gear1LM.geartable[0] = 0
-		Gear1LM.geartable[1] = 0.1
+		Gear1LM.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LM.guiupdate = function() return end
@@ -1732,7 +1732,7 @@ local Gear1LL = {}
 	Gear1LL.geartable = {}
 		Gear1LL.geartable[-1] = 1
 		Gear1LL.geartable[0] = 0
-		Gear1LL.geartable[1] = 0.1
+		Gear1LL.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LL.guiupdate = function() return end
@@ -1759,7 +1759,7 @@ local Gear1TDS = {}
 	Gear1TDS.geartable = {}
 		Gear1TDS.geartable[-1] = 0.5
 		Gear1TDS.geartable[0] = 0
-		Gear1TDS.geartable[1] = 0.1
+		Gear1TDS.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1TDS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1TDS.guiupdate = function() return end
@@ -1783,7 +1783,7 @@ local Gear1TDM = {}
 	Gear1TDM.geartable = {}
 		Gear1TDM.geartable[-1] = 0.5
 		Gear1TDM.geartable[0] = 0
-		Gear1TDM.geartable[1] = 0.1
+		Gear1TDM.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1TDM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1TDM.guiupdate = function() return end
@@ -1807,7 +1807,7 @@ local Gear1TDL = {}
 	Gear1TDL.geartable = {}
 		Gear1TDL.geartable[-1] = 1
 		Gear1TDL.geartable[0] = 0
-		Gear1TDL.geartable[1] = 0.1
+		Gear1TDL.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1TDL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1TDL.guiupdate = function() return end
@@ -1833,7 +1833,7 @@ local Gear1LDS = {}
 	Gear1LDS.geartable = {}
 		Gear1LDS.geartable[-1] = 0.5
 		Gear1LDS.geartable[0] = 0
-		Gear1LDS.geartable[1] = 0.1
+		Gear1LDS.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LDS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LDS.guiupdate = function() return end
@@ -1857,7 +1857,7 @@ local Gear1LDM = {}
 	Gear1LDM.geartable = {}
 		Gear1LDM.geartable[-1] = 0.5
 		Gear1LDM.geartable[0] = 0
-		Gear1LDM.geartable[1] = 0.1
+		Gear1LDM.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LDM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LDM.guiupdate = function() return end
@@ -1881,7 +1881,7 @@ local Gear1LDL = {}
 	Gear1LDL.geartable = {}
 		Gear1LDL.geartable[-1] = 1
 		Gear1LDL.geartable[0] = 0
-		Gear1LDL.geartable[1] = 0.1
+		Gear1LDL.geartable[1] = 0.5
 	if ( CLIENT ) then
 		Gear1LDL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear1LDL.guiupdate = function() return end
@@ -3323,6 +3323,102 @@ local Gear6STL = {}
 		Gear6STL.guiupdate = function() return end
 	end
 MobilityTable["6Gear-ST-L"] = Gear6STL
+
+local Gear8STS = {}
+	Gear8STS.id = "8Gear-ST-S"
+	Gear8STS.ent = "acf_gearbox"
+	Gear8STS.type = "Mobility"
+	Gear8STS.name = "8-Speed, Straight, Small"
+	Gear8STS.desc = "A small and light 8 speed straight-through gearbox."
+	Gear8STS.model = "models/engines/t5small.mdl"
+	Gear8STS.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear8STS.category = "8-Speed"
+	Gear8STS.weight = Gear8SW
+	Gear8STS.switch = 0.3
+	Gear8STS.maxtq = GearSMT
+	Gear8STS.gears = 8
+	Gear8STS.doubleclutch = false
+	Gear8STS.geartable = {}
+		Gear8STS.geartable[-1] = 0.5
+		Gear8STS.geartable[0] = 0
+		Gear8STS.geartable[1] = 0.1
+		Gear8STS.geartable[2] = 0.2
+		Gear8STS.geartable[3] = 0.3
+		Gear8STS.geartable[4] = 0.4
+		Gear8STS.geartable[5] = 0.5
+		Gear8STS.geartable[6] = 0.6
+		Gear8STS.geartable[7] = 0.7
+		Gear8STS.geartable[8] = 0.8
+	if ( CLIENT ) then
+		Gear8STS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear8STS.guiupdate = function() return end
+	end
+MobilityTable["8Gear-ST-S"] = Gear8STS
+
+local Gear8STM = {}
+	Gear8STM.id = "8Gear-ST-M"
+	Gear8STM.ent = "acf_gearbox"
+	Gear8STM.type = "Mobility"
+	Gear8STM.name = "8-Speed, Straight, Medium"
+	Gear8STM.desc = "A medium 8 speed straight-through gearbox."
+	Gear8STM.model = "models/engines/t5med.mdl"
+	Gear8STM.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear8STM.category = "8-Speed"
+	Gear8STM.weight = Gear8MW
+	Gear8STM.switch = 0.4
+	Gear8STM.maxtq = GearMMT
+	Gear8STM.gears = 8
+	Gear8STM.doubleclutch = false
+	Gear8STM.geartable = {}
+		Gear8STM.geartable[-1] = 0.5
+		Gear8STM.geartable[0] = 0
+		Gear8STM.geartable[1] = 0.1
+		Gear8STM.geartable[2] = 0.2
+		Gear8STM.geartable[3] = 0.3
+		Gear8STM.geartable[4] = 0.4
+		Gear8STM.geartable[5] = 0.5
+		Gear8STM.geartable[6] = 0.6
+		Gear8STM.geartable[7] = 0.7
+		Gear8STM.geartable[8] = -0.1
+	if ( CLIENT ) then
+		Gear8STM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear8STM.guiupdate = function() return end
+	end
+MobilityTable["8Gear-ST-M"] = Gear8STM
+
+
+
+
+local Gear8STL = {}
+	Gear8STL.id = "8Gear-ST-L"
+	Gear8STL.ent = "acf_gearbox"
+	Gear8STL.type = "Mobility"
+	Gear8STL.name = "8-Speed, Straight, Large"
+	Gear8STL.desc = "A large 8 speed straight-through gearbox."
+	Gear8STL.model = "models/engines/t5large.mdl"
+	Gear8STL.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear8STL.category = "8-Speed"
+	Gear8STL.weight = Gear8LW
+	Gear8STL.switch = 0.6
+	Gear8STL.maxtq = GearLMT
+	Gear8STL.gears = 8
+	Gear8STL.doubleclutch = false
+	Gear8STL.geartable = {}
+		Gear8STL.geartable[-1] = 0.5
+		Gear8STL.geartable[0] = 0
+		Gear8STL.geartable[1] = 0.1
+		Gear8STL.geartable[2] = 0.2
+		Gear8STL.geartable[3] = 0.3
+		Gear8STL.geartable[4] = 0.4
+		Gear8STL.geartable[5] = 0.5
+		Gear8STL.geartable[6] = 0.6
+		Gear8STL.geartable[7] = 0.7
+		Gear8STL.geartable[8] = -0.1
+	if ( CLIENT ) then
+		Gear8STL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear8STL.guiupdate = function() return end
+	end
+MobilityTable["8Gear-ST-L"] = Gear8STL
 
 
 
