@@ -203,4 +203,15 @@ Engines :
 --Fixed ammo menus, they have a scrollbar so those with less than X768 can see ammo info.
 --Added Imperial outputs to engines (hp/lb ft)
 --Admiral Wrex made both these awesome changes!
+*r27
+Engines :
+--Added V6, Flat4, 6, and electric motors
+--Retuned and rebalanced every motor, many motors were buffed (see SVN log for full list of changes)
+--Added straight-through gearboxes
+--Fixed flywheels not revving down properly, fixed throttling issues
+--Off throttle volume cut 50%
+--Proper code for electric/turbine torque curves
+--Fucking awesome work by Wrex, Vii, and Gamerpaddy
 
+Misc :
+Nogravving dead props bug fixed
