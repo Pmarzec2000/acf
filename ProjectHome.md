@@ -1,0 +1,1 @@
+A attempt at making a "realistic" combat system for Garry's Mod, with a focus on adding limitations to the building as to create an engineering challenge and provide a semblance of balance.
